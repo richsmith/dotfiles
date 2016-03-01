@@ -18,38 +18,23 @@
 
 ;; set frame title to buffer/filename followed by [username@machine]
 (add-hook 'window-configuration-change-hook
-	  (lambda ()
-	    (setq frame-title-format
-		  (concat
-		   "%b ["
- 		   user-login-name "@" system-name "]"))))
+      (lambda ()
+        (setq frame-title-format
+          (concat
+           "%b ["
+           user-login-name "@" system-name "]"))))
 
 
 ;;; ***************************************************************************
 ;;; Filesystem
 ;;;
 
+
 ;; Put autosave and backup files in their own directories rather than strewn
 ;; all over the filesystem
-;; (Adapted from "http://snarfed.org/space/gnu emacs backup files")
 (setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
 (setq auto-save-file-name-transforms `((".*", "~/.emacs.d/autosaves" t)))
 
-
-;; (defvar backup-dir "~/.emacs-saves/backups/")
-;; (setq backup-directory-alist (list (cons "." backup-dir)))
-;; (defvar autosave-dir "~/.emacs-d/autosaves/")
-;; (make-directory autosave-dir t)
-
-;; (defun auto-save-file-name-p (filename)
-;;   (string-match "^#.*#$" (file-name-nondirectory filename)))
-
-;; (defun make-auto-save-file-name ()
-;;   (concat autosave-dir
-;;    (if buffer-file-name
-;;       (concat "#" (file-name-nondirectory buffer-file-name) "#")
-;;     (expand-file-name
-;;      (concat "#%" (buffer-name) "#")))))
 
 
 ;;; ***************************************************************************
@@ -59,42 +44,77 @@
 (defun pretty-print-xml-region (begin end)
   (interactive "r")
     (save-excursion (nxml-mode)
-		    (goto-char begin)
-		    (while (search-forward-regexp "\>[ \\t]*\<" nil t)
-		      (backward-char)
-		      (insert "\n"))
-		    (indent-region begin end))
+            (goto-char begin)
+            (while (search-forward-regexp "\>[ \\t]*\<" nil t)
+              (backward-char)
+              (insert "\n"))
+            (indent-region begin end))
     (message "XML pretty-printed :)"))
 
 (defun get-random ()
   (interactive)
   (insert (format "%d" (random))))
 
-(defun rotate-windows ()
-  "Rotate your windows"
-  (interactive)
-  (cond ((not (> (count-windows)1))
-         (message "You can't rotate a single window!"))
-        (t
-         (setq i 1)
-         (setq numWindows (count-windows))
-         (while  (< i numWindows)
-           (let* (
-                  (w1 (elt (window-list) i))
-                  (w2 (elt (window-list) (+ (% i numWindows) 1)))
+(defun replace-with-md5 (p1 p2)
+  (interactive "r")
+  (let ((md5-value (md5 (buffer-substring-no-properties p1 p2))))
+    (delete-region (region-beginning) (region-end))
+    (insert md5-value)))
 
-                  (b1 (window-buffer w1))
-                  (b2 (window-buffer w2))
 
-                  (s1 (window-start w1))
-                  (s2 (window-start w2))
-                  )
-             (set-window-buffer w1  b2)
-             (set-window-buffer w2 b1)
-             (set-window-start w1 s2)
-             (set-window-start w2 s1)
-             (setq i (1+ i)))))))
+;; (defun rotate-windows ()
+;;   "Rotate your windows"
+;;   (interactive)
+;;   (cond ((not (> (count-windows)1))
+;;          (message "You can't rotate a single window!"))
+;;         (t
+;;          (setq i 1)
+;;          (setq numWindows (count-windows))
+;;          (while  (< i numWindows)
+;;            (let* (
+;;                   (w1 (elt (window-list) i))
+;;                   (w2 (elt (window-list) (+ (% i numWindows) 1)))
 
+;;                   (b1 (window-buffer w1))
+;;                   (b2 (window-buffer w2))
+
+;;                   (s1 (window-start w1))
+;;                   (s2 (window-start w2))
+;;                   )
+;;              (set-window-buffer w1  b2)
+;;              (set-window-buffer w2 b1)
+;;              (set-window-start w1 s2)
+;;              (set-window-start w2 s1)
+;;              (setq i (1+ i)))))))
+
+
+(defun rotate-windows (arg)
+  "Rotate your windows; use the prefix argument to rotate the other direction"
+  (interactive "P")
+  (if (not (> (count-windows) 1))
+      (message "You can't rotate a single window")
+    (let* ((rotate-times (if (and (numberp arg) (not (= arg 0))) arg 1))
+           (direction (if (or (< rotate-times 0) (equal arg '(4)))
+                          'reverse
+                        (lambda (x) x)))
+           (i 0))
+      (while (not (= rotate-times 0))
+        (while  (< i (- (count-windows) 1))
+          (let* ((w1 (elt (funcall direction (window-list)) i))
+                 (w2 (elt (funcall direction (window-list)) (+ i 1)))
+                 (b1 (window-buffer w1))
+                 (b2 (window-buffer w2))
+                 (s1 (window-start w1))
+                 (s2 (window-start w2))
+                 (p1 (window-point w1))
+                 (p2 (window-point w2)))
+            (set-window-buffer-start-and-point w1 b2 s2 p2)
+            (set-window-buffer-start-and-point w2 b1 s1 p1)
+            (setq i (1+ i))))
+
+        (setq i 0
+              rotate-times
+              (if (< rotate-times 0) (1+ rotate-times) (1- rotate-times)))))))
 
 
 (defun close-brace-and-move-point ()
@@ -106,8 +126,6 @@
   (previous-line)
   (end-of-line)
   (newline-and-indent))
-
-
 
 
 (defun close-bracket-and-move-point ()
@@ -128,7 +146,6 @@
   (insert "'")
   (insert "'")
   (backward-char))
-
 
 
 (defun goto-line-with-feedback ()
@@ -166,8 +183,8 @@
 (setq sentence-end-double-space nil)
 (setq fill-column 100)
 (setq comment-fill-column 100)
-;; (require 'uniquify) <- shouldn't be needed for latest Emacs
-;; (setq uniquify-buffer-name-style 'forward)
+(setq git-commit-summary-max-length 72)
+(setq-default dired-listing-switches "-alhv")
 
 ;; Scrolling
 (setq scroll-step 1)
@@ -194,6 +211,18 @@
 ; turn off that BLOODY ANNOYING BEEP (only way that seems guaranteed to work!)
 (defun do-not-ring-bloody-bell () nil)
 (setq ring-bell-function `do-not-ring-bloody-bell)
+
+;; stop closing windows on repeated presses of escape
+(defadvice keyboard-escape-quit (around my-keyboard-escape-quit activate)
+  (let (orig-one-window-p)
+    (fset 'orig-one-window-p (symbol-function 'one-window-p))
+    (fset 'one-window-p (lambda (&optional nomini all-frames) t))
+    (unwind-protect
+        ad-do-it
+      (fset 'one-window-p (symbol-function 'orig-one-window-p)))))
+
+
+(setq highlight-tail-mode 1)
 
 
 ;; ***************************************************************************
@@ -269,8 +298,7 @@
 (when (>= emacs-major-version 24)
   (require 'package)
   (package-initialize)
-  (add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/") t)
-  )
+  (add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/") t))
 
 (when (memq window-system '(mac ns))
   (exec-path-from-shell-initialize))
@@ -315,6 +343,9 @@
 ;; setup files ending in “.js” to open in js2-mode
 (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
 (add-to-list 'auto-mode-alist '("\\.ejs\\'" . web-mode))
+
+
+(add-hook 'js-mode-hook (lambda () (tern-mode t)))
 
 (require 'flycheck)
 (add-hook 'js2-mode-hook
@@ -413,7 +444,7 @@
 (global-set-key "\M-n" 'forward-paragraph)
 
 (global-set-key (kbd "C-S-j")
-            (lambda ()
+                (lambda ()
                   (interactive)
                   (join-line -1))) 
 
@@ -424,6 +455,9 @@
 (global-set-key "\C-x\M-f" 'helm-projectile)
 (global-set-key (kbd "s-s") 'helm-ag)
 
+(global-set-key (kbd "s-<left>") #'previous-buffer)
+(global-set-key (kbd "s-<right>") #'next-buffer)
+
 (global-set-key [remap goto-line] 'goto-line-with-feedback)
 
 (global-set-key (kbd "C-'") 'close-quotes-and-move-point)
@@ -431,15 +465,8 @@
 (global-set-key (kbd "C-(") 'close-bracket-and-move-point)
 (global-set-key (kbd "C-{") 'close-brace-and-move-point)
 
-
 (define-key global-map (kbd "C-x O") 'previous-multiframe-window)
-(global-set-key (kbd "C-c t") 'toggle-transparency)
-
-
-(projectile-global-mode)
-(setq projectile-completion-system 'helm)
-(setq projectile-enable-caching t)
-(helm-projectile-on)
+(global-set-key (kbd "C-x t") 'rotate-windows)
 
 (global-set-key (kbd "C-x g") 'magit-status)
 (global-set-key (kbd "C-x C-g") 'magit-status)
@@ -447,3 +474,20 @@
 (global-set-key (kbd "C-z") 'repeat)
 
 
+(projectile-global-mode)
+(setq projectile-completion-system 'helm)
+(setq projectile-enable-caching t)
+(helm-projectile-on)
+
+
+
+(global-set-key (kbd "C-h") 'delete-backward-char)
+(global-set-key (kbd "s-h") 'help-command)
+
+(eval-after-load "dabbrev" '(defalias 'dabbrev-expand 'hippie-expand))
+
+
+(define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action)
+
+
+(setq tern-command '("tern" "--no-port-file"))
