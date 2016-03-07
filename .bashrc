@@ -79,7 +79,7 @@ umask 077 # in case this isn't set in .profile
 
 ########## Sorenson-specific stuff ##########
 
-export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
+export PATH="/usr/local/bin/:/usr/local/sbin:$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
 
 alias adgrep='grep -ir --exclude-dir="node_modules" --exclude-dir="coverage" --exclude-dir="webkitbuilds" --exclude-dir="data" --exclude-dir="static/js/vnd" --exclude="javascript.js" --exclude="static/bootstrap.min.css"'
 
