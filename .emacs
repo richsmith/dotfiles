@@ -26,6 +26,42 @@
 
 
 ;;; ***************************************************************************
+;;; Packages
+;;;
+(setq package-archives '(("melpa" . "http://melpa.org/packages/")
+                         ("gnu" . "http://elpa.gnu.org/packages/")))
+;; Marmalade probably redundant compared to melpa
+;; ("marmalade" . "http://marmalade-repo.org/packages/")
+
+
+(setq package-list '(magit
+					 web-mode
+					 flycheck
+					 editorconfig
+					 helm
+					 helm-ag
+					 projectile
+					 helm-projectile
+					 js2-mode
+					 ; elpy? }
+					 ; jedi? } python
+					 ))
+
+(if (eq system-type 'darwin)
+ 	(add-to-list 'package-list 'exec-path-from-shell))
+
+(package-initialize) ; activate all the packages (in particular autoloads)
+
+(or (file-exists-p package-user-dir) ; fetch the list of packages available 
+  (package-refresh-contents))
+
+(dolist (package package-list) ; install the missing packages
+  (unless (package-installed-p package)
+	(package-refresh-contents)
+    (package-install package)))
+
+
+;;; ***************************************************************************
 ;;; Filesystem
 ;;;
 
@@ -60,32 +96,6 @@
   (let ((md5-value (md5 (buffer-substring-no-properties p1 p2))))
     (delete-region (region-beginning) (region-end))
     (insert md5-value)))
-
-
-;; (defun rotate-windows ()
-;;   "Rotate your windows"
-;;   (interactive)
-;;   (cond ((not (> (count-windows)1))
-;;          (message "You can't rotate a single window!"))
-;;         (t
-;;          (setq i 1)
-;;          (setq numWindows (count-windows))
-;;          (while  (< i numWindows)
-;;            (let* (
-;;                   (w1 (elt (window-list) i))
-;;                   (w2 (elt (window-list) (+ (% i numWindows) 1)))
-
-;;                   (b1 (window-buffer w1))
-;;                   (b2 (window-buffer w2))
-
-;;                   (s1 (window-start w1))
-;;                   (s2 (window-start w2))
-;;                   )
-;;              (set-window-buffer w1  b2)
-;;              (set-window-buffer w2 b1)
-;;              (set-window-start w1 s2)
-;;              (set-window-start w2 s1)
-;;              (setq i (1+ i)))))))
 
 
 (defun rotate-windows (arg)
@@ -158,18 +168,23 @@
     (linum-mode -1)))
 
 
-;; frame transparency; below isn't perfect. From emacswiki.
-;(set-frame-parameter (selected-frame) 'alpha '(85 50))
-;(add-to-list 'default-frame-alist '(alpha 85 50))
+(defun rename-current-buffer-file ()
+  "Renames current buffer and file it is visiting."
+  (interactive)
+  (let ((name (buffer-name))
+        (filename (buffer-file-name)))
+    (if (not (and filename (file-exists-p filename)))
+        (error "Buffer '%s' is not visiting a file" name)
+      (let ((new-name (read-file-name "New name: " filename)))
+        (if (get-buffer new-name)
+            (error "A buffer named '%s' already exists" new-name)
+          (rename-file filename new-name 1)
+          (rename-buffer new-name)
+          (set-visited-file-name new-name)
+          (set-buffer-modified-p nil)
+          (message "File '%s' successfully renamed to '%s'"
+                   name (file-name-nondirectory new-name)))))))
 
-(eval-when-compile (require 'cl)) ; toggle transparency
- (defun toggle-transparency ()
-   (interactive)
-   (if (/=
-        (cadr (frame-parameter nil 'alpha))
-        100)
-       (set-frame-parameter nil 'alpha '(100 100))
-     (set-frame-parameter nil 'alpha '(85 50))))
 
 ;;; ***************************************************************************
 ;;; Miscellaneous
@@ -179,12 +194,13 @@
 (global-subword-mode 1)
 (setq dabbrev-case-fold-search nil)
 (put 'upcase-region 'disabled nil)
-(delete-selection-mode 1)  ; can overwrite text when it is selected
+(delete-selection-mode 1)
 (setq sentence-end-double-space nil)
 (setq fill-column 100)
 (setq comment-fill-column 100)
 (setq git-commit-summary-max-length 72)
 (setq-default dired-listing-switches "-alhv")
+(setq vc-follow-symlinks nil)
 
 ;; Scrolling
 (setq scroll-step 1)
@@ -251,6 +267,7 @@
 
 
 (add-to-list 'load-path "~/.emacs.d/plugins")
+(elpy-use-ipython)
 ;; (require 'python-mode)
 ;; (require 'auto-complete)
 ;; (global-auto-complete-mode t)
@@ -295,37 +312,11 @@
 (setq default-directory "~/")
 (setq create-lockfiles nil)
 
-(when (>= emacs-major-version 24)
-  (require 'package)
-  (package-initialize)
-  (add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/") t))
 
 (when (memq window-system '(mac ns))
   (exec-path-from-shell-initialize))
 
 ;(global-set-key (kbd "C-x f") 'find-file-in-repository)
-
-
-
-(setq sr-speedbar-right-side nil)
-(setq sr-speedbar-width-x 150)
-
-
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(cgs-step-search-path "/features/**/*.rb; /feature_tests/**/*.rb; ")
- '(custom-enabled-themes (quote (leuven)))
- '(custom-safe-themes (quote ("4f81886421185048bd186fbccc98d95fca9c8b6a401771b7457d81f749f5df75" "9dae95cdbed1505d45322ef8b5aa90ccb6cb59e0ff26fef0b8f411dfc416c552" "15990253bbcfb708ad6ee158d9969cf74be46e3fea2b35f1a0afbac7d4682fbf" default))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
-
 
 
 
@@ -348,7 +339,7 @@
 (add-hook 'js-mode-hook (lambda () (tern-mode t)))
 
 (require 'flycheck)
-(add-hook 'js2-mode-hook
+(addemacs -hook 'js2-mode-hook
           (lambda () (flycheck-mode t)))
 ;(setq flycheck-jshintrc "/Users/rls/code/overlay-management-system/.jshintrc")
 
@@ -356,7 +347,7 @@
 
 
 ;; ***************************************************************************
-;; HTML
+;; HTML and CSS
 ;;
 (setq web-mode-markup-indent-offset 4)
 (setq web-mode-css-indent-offset 4)
@@ -372,6 +363,8 @@
 (add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
 
+(add-to-list 'auto-mode-alist '("\\.scss\\'" . css-mode))
+
 
 ;; ***************************************************************************
 ;; Sorenson-specific stuff
@@ -380,7 +373,7 @@
 (load "editorconfig")
 
 
-(add-to-list 'auto-mode-alist '("\\.scss\\'" . css-mode))
+
 
 
 
@@ -389,6 +382,7 @@
 
 (helm-mode)
 (global-set-key (kbd "M-x") 'helm-M-x)
+(global-set-key (kbd "C-x C-f") 'helm-find-files)
 (setq helm-delete-minibuffer-contents-from-point 1)
 (setq helm-exit-idle-delay 0)
 (set-face-attribute 'helm-selection nil :background "blue" :foreground "white")
@@ -401,32 +395,11 @@
 
 
 
-
-(defun rename-current-buffer-file ()
-  "Renames current buffer and file it is visiting."
-  (interactive)
-  (let ((name (buffer-name))
-        (filename (buffer-file-name)))
-    (if (not (and filename (file-exists-p filename)))
-        (error "Buffer '%s' is not visiting a file" name)
-      (let ((new-name (read-file-name "New name: " filename)))
-        (if (get-buffer new-name)
-            (error "A buffer named '%s' already exists" new-name)
-          (rename-file filename new-name 1)
-          (rename-buffer new-name)
-          (set-visited-file-name new-name)
-          (set-buffer-modified-p nil)
-          (message "File '%s' successfully renamed to '%s'"
-                   name (file-name-nondirectory new-name)))))))
-
-(global-set-key (kbd "C-x C-r") 'rename-current-buffer-file)
-
-
-
 ;;; ***************************************************************************
 ;;; Keys 
-;;; (Keep at the bottom to avoid being clobbered by various modes
+;;; (Keep at the bottom to avoid being clobbered by various modes)
 
+(global-set-key (kbd "C-x C-r") 'rename-current-buffer-file)
 
 ;; delete as delete instead of backspace
 (global-set-key [delete] 'delete-char)
@@ -484,10 +457,30 @@
 (global-set-key (kbd "C-h") 'delete-backward-char)
 (global-set-key (kbd "s-h") 'help-command)
 
-(eval-after-load "dabbrev" '(defalias 'dabbrev-expand 'hippie-expand))
-
 
 (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action)
 
 
 (setq tern-command '("tern" "--no-port-file"))
+
+
+
+
+
+;; ***************************************************************************
+;; Custom
+;;
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(cgs-step-search-path "/features/**/*.rb; /feature_tests/**/*.rb; ")
+ '(custom-enabled-themes (quote (leuven)))
+ '(custom-safe-themes (quote ("4f81886421185048bd186fbccc98d95fca9c8b6a401771b7457d81f749f5df75" "9dae95cdbed1505d45322ef8b5aa90ccb6cb59e0ff26fef0b8f411dfc416c552" "15990253bbcfb708ad6ee158d9969cf74be46e3fea2b35f1a0afbac7d4682fbf" default))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
