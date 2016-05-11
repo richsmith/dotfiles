@@ -267,7 +267,7 @@
 
 
 (add-to-list 'load-path "~/.emacs.d/plugins")
-(elpy-use-ipython)
+; (elpy-use-ipython)
 ;; (require 'python-mode)
 ;; (require 'auto-complete)
 ;; (global-auto-complete-mode t)
@@ -339,7 +339,7 @@
 (add-hook 'js-mode-hook (lambda () (tern-mode t)))
 
 (require 'flycheck)
-(addemacs -hook 'js2-mode-hook
+(add-hook 'js2-mode-hook
           (lambda () (flycheck-mode t)))
 ;(setq flycheck-jshintrc "/Users/rls/code/overlay-management-system/.jshintrc")
 
