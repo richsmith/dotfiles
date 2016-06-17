@@ -13,6 +13,7 @@
 (set-background-color "white")
 
 (setq inhibit-startup-message t)
+(setq initial-scratch-message nil)
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 
 
@@ -426,7 +427,8 @@
 (global-set-key "\M-z" 'zap-up-to-char)
 
 (global-set-key "\C-x\M-f" 'helm-projectile)
-(global-set-key (kbd "s-s") 'helm-ag)
+(global-set-key (kbd "s-s") 'helm-do-ag)
+(global-set-key (kbd "s-S") 'helm-do-ag-project-root)
 
 (global-set-key (kbd "s-<left>") #'previous-buffer)
 (global-set-key (kbd "s-<right>") #'next-buffer)
