@@ -44,7 +44,7 @@
 					 projectile
 					 helm-projectile
 					 js2-mode
-					 ; elpy? }
+					 elpy
 					 ; jedi? } python
 					 ))
 
@@ -186,6 +186,16 @@
           (message "File '%s' successfully renamed to '%s'"
                    name (file-name-nondirectory new-name)))))))
 
+(defun scroll-up-preserve-location ()
+  (interactive)
+  (scroll-up-line)
+  (next-line))
+
+(defun scroll-down-preserve-location ()
+  (interactive)
+  (scroll-down-line)
+  (previous-line))
+
 
 ;;; ***************************************************************************
 ;;; Miscellaneous
@@ -208,6 +218,10 @@
 (setq scroll-conservatively 100000)
 (setq scroll-margin 10)
 (setq linum-delay t)
+(global-set-key (kbd "M-p") 'scroll-down-preserve-location)
+(global-set-key (kbd "M-n") 'scroll-up-preserve-location)
+(global-set-key (kbd "C-M-p") (kbd "C-u 8 C-p"))
+(global-set-key (kbd "C-M-n") (kbd "C-u 8 C-n"))
 
 ;; Display
 (setq-default transient-mark-mode t) ; show selections
@@ -268,6 +282,14 @@
 
 
 (add-to-list 'load-path "~/.emacs.d/plugins")
+(elpy-enable)
+(setq elpy-rpc-python-command "python3")
+(setq python-check-command "flake8")
+(highlight-indentation-mode -1)
+										;(elpy-use-ipython)
+
+;(setq elpy-rpc-backend "jedi")
+; have to run M-x elpy-config
 ; (elpy-use-ipython)
 ;; (require 'python-mode)
 ;; (require 'auto-complete)
@@ -372,6 +394,8 @@
 ;;
 (add-to-list 'load-path "~/.emacs.d/lisp")
 (load "editorconfig")
+(require 'editorconfig)
+(editorconfig-mode 1)
 
 
 
@@ -414,8 +438,8 @@
 (global-set-key [f12] 'visual-line-mode)
 (global-set-key (kbd "<C-tab>") 'whitespace-mode)
 
-(global-set-key "\M-p" 'backward-paragraph)
-(global-set-key "\M-n" 'forward-paragraph)
+;(global-set-key "\M-p" 'backward-paragraph)
+;(global-set-key "\M-n" 'forward-paragraph)
 
 (global-set-key (kbd "C-S-j")
                 (lambda ()
@@ -479,7 +503,12 @@
  ;; If there is more than one, they won't work right.
  '(cgs-step-search-path "/features/**/*.rb; /feature_tests/**/*.rb; ")
  '(custom-enabled-themes (quote (leuven)))
- '(custom-safe-themes (quote ("4f81886421185048bd186fbccc98d95fca9c8b6a401771b7457d81f749f5df75" "9dae95cdbed1505d45322ef8b5aa90ccb6cb59e0ff26fef0b8f411dfc416c552" "15990253bbcfb708ad6ee158d9969cf74be46e3fea2b35f1a0afbac7d4682fbf" default))))
+ '(custom-safe-themes
+   (quote
+	("4f81886421185048bd186fbccc98d95fca9c8b6a401771b7457d81f749f5df75" "9dae95cdbed1505d45322ef8b5aa90ccb6cb59e0ff26fef0b8f411dfc416c552" "15990253bbcfb708ad6ee158d9969cf74be46e3fea2b35f1a0afbac7d4682fbf" default)))
+ '(elpy-modules
+   (quote
+	(elpy-module-company elpy-module-eldoc elpy-module-flymake elpy-module-pyvenv elpy-module-yasnippet elpy-module-sane-defaults))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
