@@ -286,6 +286,7 @@
 (setq elpy-rpc-python-command "python3")
 (setq python-check-command "flake8")
 (highlight-indentation-mode -1)
+(define-key elpy-mode-map (kbd "M-,") 'pop-tag-mark)
 										;(elpy-use-ipython)
 
 ;(setq elpy-rpc-backend "jedi")
@@ -475,7 +476,7 @@
 
 (projectile-global-mode)
 (setq projectile-completion-system 'helm)
-(setq projectile-enable-caching t)
+(setq projectile-enable-caching nil)
 (helm-projectile-on)
 
 
