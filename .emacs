@@ -200,7 +200,7 @@
 ;;; ***************************************************************************
 ;;; Miscellaneous
 ;;;
-
+(setq-default indent-tabs-mode nil)
 (setq default-tab-width 4)
 (global-subword-mode 1)
 (setq dabbrev-case-fold-search nil)
