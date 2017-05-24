@@ -35,18 +35,16 @@
 ;; ("marmalade" . "http://marmalade-repo.org/packages/")
 
 
-(setq package-list '(magit
-					 web-mode
-					 flycheck
-					 editorconfig
-					 helm
-					 helm-ag
-					 projectile
-					 helm-projectile
-					 js2-mode
-					 elpy
-					 ; jedi? } python
-					 ))
+(setq package-list '(editorconfig
+                     elpy
+                     flycheck
+                     helm
+                     helm-ag
+                     helm-projectile
+                     js2-mode
+                     magit
+                     projectile
+                     web-mode))
 
 (if (eq system-type 'darwin)
  	(add-to-list 'package-list 'exec-path-from-shell))
@@ -176,7 +174,7 @@
         (filename (buffer-file-name)))
     (if (not (and filename (file-exists-p filename)))
         (error "Buffer '%s' is not visiting a file" name)
-      (let ((new-name (read-file-name "New name: " filename)))
+      (let ((new-name (read-file-name "New name: " filename nil nil)))
         (if (get-buffer new-name)
             (error "A buffer named '%s' already exists" new-name)
           (rename-file filename new-name 1)
@@ -288,6 +286,10 @@
 (highlight-indentation-mode -1)
 (define-key elpy-mode-map (kbd "M-,") 'pop-tag-mark)
 										;(elpy-use-ipython)
+
+(setq python-shell-completion-native nil)
+(setq python-shell-native-complete nil)
+(add-to-list 'python-shell-completion-native-disabled-interpreters "python3")
 
 ;(setq elpy-rpc-backend "jedi")
 ; have to run M-x elpy-config
@@ -409,6 +411,7 @@
 (helm-mode)
 (global-set-key (kbd "M-x") 'helm-M-x)
 (global-set-key (kbd "C-x C-f") 'helm-find-files)
+
 (setq helm-delete-minibuffer-contents-from-point 1)
 (setq helm-exit-idle-delay 0)
 (set-face-attribute 'helm-selection nil :background "blue" :foreground "white")
@@ -451,7 +454,8 @@
   "Kill up to, but not including ARGth occurrence of CHAR.")
 (global-set-key "\M-z" 'zap-up-to-char)
 
-(global-set-key "\C-x\M-f" 'helm-projectile)
+(global-set-key (kbd "C-x M-f") 'helm-projectile)
+(global-set-key (kbd "C-x M-F") 'helm-projectile-find-file-in-known-projects)
 (global-set-key (kbd "s-s") 'helm-do-ag)
 (global-set-key (kbd "s-S") 'helm-do-ag-project-root)
 
@@ -506,13 +510,14 @@
  '(custom-enabled-themes (quote (leuven)))
  '(custom-safe-themes
    (quote
-	("4f81886421185048bd186fbccc98d95fca9c8b6a401771b7457d81f749f5df75" "9dae95cdbed1505d45322ef8b5aa90ccb6cb59e0ff26fef0b8f411dfc416c552" "15990253bbcfb708ad6ee158d9969cf74be46e3fea2b35f1a0afbac7d4682fbf" default)))
+    ("4f81886421185048bd186fbccc98d95fca9c8b6a401771b7457d81f749f5df75" "9dae95cdbed1505d45322ef8b5aa90ccb6cb59e0ff26fef0b8f411dfc416c552" "15990253bbcfb708ad6ee158d9969cf74be46e3fea2b35f1a0afbac7d4682fbf" default)))
  '(elpy-modules
    (quote
-	(elpy-module-company elpy-module-eldoc elpy-module-flymake elpy-module-pyvenv elpy-module-yasnippet elpy-module-sane-defaults)))
+    (elpy-module-company elpy-module-eldoc elpy-module-flymake elpy-module-pyvenv elpy-module-yasnippet elpy-module-sane-defaults)))
+ '(nyan-mode t)
  '(package-selected-packages
    (quote
-	(fish-mode column-marker web-mode sql-indent spaceline rope-read-mode org-agenda-property nyan-mode magit js2-mode jedi-direx helm-projectile helm-filesets helm-ag flycheck exec-path-from-shell elpy editorconfig csv-mode company-jedi anaconda-mode))))
+    (aggressive-indent highlight-tail string-utils fish-mode column-marker web-mode sql-indent spaceline rope-read-mode org-agenda-property nyan-mode magit js2-mode jedi-direx helm-projectile helm-filesets helm-ag flycheck exec-path-from-shell elpy editorconfig csv-mode company-jedi anaconda-mode))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
