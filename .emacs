@@ -42,6 +42,7 @@
                      helm-ag
                      helm-projectile
                      js2-mode
+                     json-mode
                      magit
                      projectile
                      web-mode))
@@ -210,6 +211,7 @@
 (setq git-commit-summary-max-length 72)
 (setq-default dired-listing-switches "-alhv")
 (setq vc-follow-symlinks nil)
+(set-register ?e (cons 'file "~/.emacs"))
 
 ;; Scrolling
 (setq scroll-step 1)
@@ -255,6 +257,18 @@
 
 
 ;; ***************************************************************************
+;; Mac
+;;
+(setq mac-option-modifier 'super)
+(setq mac-command-modifier 'meta)
+(setq default-directory "~/")
+(setq create-lockfiles nil)
+
+(when (memq window-system '(mac ns))
+  (exec-path-from-shell-initialize))
+
+
+;; ***************************************************************************
 ;; SLIME (Lisp environment)
 ;;
 
@@ -285,64 +299,10 @@
 (setq python-check-command "flake8")
 (highlight-indentation-mode -1)
 (define-key elpy-mode-map (kbd "M-,") 'pop-tag-mark)
-										;(elpy-use-ipython)
 
 (setq python-shell-completion-native nil)
 (setq python-shell-native-complete nil)
 (add-to-list 'python-shell-completion-native-disabled-interpreters "python3")
-
-;(setq elpy-rpc-backend "jedi")
-; have to run M-x elpy-config
-; (elpy-use-ipython)
-;; (require 'python-mode)
-;; (require 'auto-complete)
-;; (global-auto-complete-mode t)
-
-;; ;;(add-to-list 'load-path "/usr/share/emacs/site-lisp/pymacs")
-;; (require 'pymacs)
-
-;; (autoload 'pymacs-apply "pymacs")
-;; (autoload 'pymacs-call "pymacs")
-;; (autoload 'pymacs-eval "pymacs" nil t)
-;; (autoload 'pymacs-exec "pymacs" nil t)
-;; (autoload 'pymacs-load "pymacs" nil t)
-
-
-
-
-;; (setq pymacs-load-path '("/usr/local/lib/python2.7/dist-packages/"))
-;; (pymacs-load "ropemacs" "rope-")
-;; (setq ropemacs-enable-autoimport t)
-
-
-
-;; (setq py-install-directory "/home/rls/downloads/python-mode.el-6.1.0/")
-;; (add-to-list 'load-path py-install-directory)
-;; (require 'python-mode)
-
-;; (setq py-load-pymacs-p t)
-
-;; ;; (require 'auto-complete-config)
-;; ;; (ac-config-default)    output.cl    output.cl
-
-;; (autoload 'company-mode "company" nil t)
-
-
-
-;; ***************************************************************************
-;; Mac
-;;
-(setq mac-option-modifier 'super)
-(setq mac-command-modifier 'meta)
-;;(setq ns-function-modifier 'control)
-(setq default-directory "~/")
-(setq create-lockfiles nil)
-
-
-(when (memq window-system '(mac ns))
-  (exec-path-from-shell-initialize))
-
-;(global-set-key (kbd "C-x f") 'find-file-in-repository)
 
 
 
@@ -351,11 +311,6 @@
 ;;
 (add-hook 'js-mode-hook 'js2-minor-mode)
 (add-hook 'js2-mode-hook 'ac-js2-mode)
-
-;(global-set-key [f5] 'slime-js-reload)
-;(add-hook 'js2-mode-hook
-;          (lambda ()
-;            (slime-js-minor-mode 1)))
 
 ;; setup files ending in “.js” to open in js2-mode
 (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
@@ -367,9 +322,8 @@
 (require 'flycheck)
 (add-hook 'js2-mode-hook
           (lambda () (flycheck-mode t)))
-;(setq flycheck-jshintrc "/Users/rls/code/overlay-management-system/.jshintrc")
 
-;;(require 'nodejs-repl)
+(setq js-indent-level 2)
 
 
 ;; ***************************************************************************
@@ -517,7 +471,7 @@
  '(nyan-mode t)
  '(package-selected-packages
    (quote
-    (aggressive-indent highlight-tail string-utils fish-mode column-marker web-mode sql-indent spaceline rope-read-mode org-agenda-property nyan-mode magit js2-mode jedi-direx helm-projectile helm-filesets helm-ag flycheck exec-path-from-shell elpy editorconfig csv-mode company-jedi anaconda-mode))))
+    (json-mode aggressive-indent highlight-tail string-utils fish-mode column-marker web-mode sql-indent spaceline rope-read-mode org-agenda-property nyan-mode magit js2-mode jedi-direx helm-projectile helm-filesets helm-ag flycheck exec-path-from-shell elpy editorconfig csv-mode company-jedi anaconda-mode))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
