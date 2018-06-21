@@ -1,3 +1,5 @@
+
+
 ;;; .emacs
 ;;; Rich Smith (rlsNO@SPAMhwyl.org)
 ;;; Reminder: C-x C-e to re-evaluate a line; M-x load-file to reload file
@@ -44,7 +46,9 @@
                      js2-mode
                      json-mode
                      magit
+                     multiple-cursors
                      projectile
+                     git-timemachine
                      web-mode))
 
 (if (eq system-type 'darwin)
@@ -211,6 +215,7 @@
 (setq git-commit-summary-max-length 72)
 (setq-default dired-listing-switches "-alhv")
 (setq vc-follow-symlinks nil)
+(setq gc-cons-threshold 100000000) ; attempt to stop emacs crashing in Helm
 (set-register ?e (cons 'file "~/.emacs"))
 
 ;; Scrolling
@@ -254,6 +259,7 @@
 
 
 (setq highlight-tail-mode 1)
+(global-set-key (kbd "C-S-<mouse-1>") 'mc/add-cursor-on-click)
 
 
 ;; ***************************************************************************
@@ -292,18 +298,22 @@
 ;; Python
 ;;
 
-
+;; make sure following are pip installed:
+;; jedi importmagic autopep8 yapf
+(require 'nose)
+(add-hook 'python-mode-hook (lambda () (nose-mode t)))
 (add-to-list 'load-path "~/.emacs.d/plugins")
 (elpy-enable)
 (setq elpy-rpc-python-command "python3")
 (setq python-check-command "flake8")
 (highlight-indentation-mode -1)
 (define-key elpy-mode-map (kbd "M-,") 'pop-tag-mark)
+(setq python-shell-interpreter "ipython3"
+      python-shell-interpreter-args "-i --simple-prompt")
 
 (setq python-shell-completion-native nil)
 (setq python-shell-native-complete nil)
 (add-to-list 'python-shell-completion-native-disabled-interpreters "python3")
-
 
 
 ;; ***************************************************************************
@@ -324,6 +334,8 @@
           (lambda () (flycheck-mode t)))
 
 (setq js-indent-level 2)
+
+(setq sql-indent-level 2)
 
 
 ;; ***************************************************************************
@@ -372,9 +384,10 @@
 
 (setq helm-split-window-in-side-p           t ; open helm buffer inside current window, not occupy whole other window
       ;helm-move-to-line-cycle-in-source     t ; move to end or beginning of source when reaching top or bottom of source.
-      helm-ff-search-library-in-sexp        t ; search for library in `require' and `declare-function' sexp.
+      ;helm-ff-search-library-in-sexp        t ; search for library in `require' and `declare-function' sexp.
       ;helm-scroll-amount                    8 ; scroll 8 lines other window using M-<next>/M-<prior>
-      helm-ff-file-name-history-use-recentf t)
+      ;helm-ff-file-name-history-use-recentf t)
+      )
 
 
 
@@ -426,9 +439,8 @@
 (define-key global-map (kbd "C-x O") 'previous-multiframe-window)
 (global-set-key (kbd "C-x t") 'rotate-windows)
 
-(global-set-key (kbd "C-x g") 'magit-status)
+(global-set-key (kbd "C-S-m") 'magit-status)
 (global-set-key (kbd "C-x C-g") 'magit-status)
-
 (global-set-key (kbd "C-z") 'repeat)
 
 
@@ -461,20 +473,47 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(cgs-step-search-path "/features/**/*.rb; /feature_tests/**/*.rb; ")
- '(custom-enabled-themes (quote (leuven)))
+ '(custom-enabled-themes (quote (atom-one-dark)))
  '(custom-safe-themes
    (quote
-    ("4f81886421185048bd186fbccc98d95fca9c8b6a401771b7457d81f749f5df75" "9dae95cdbed1505d45322ef8b5aa90ccb6cb59e0ff26fef0b8f411dfc416c552" "15990253bbcfb708ad6ee158d9969cf74be46e3fea2b35f1a0afbac7d4682fbf" default)))
+    ("6dd2b995238b4943431af56c5c9c0c825258c2de87b6c936ee88d6bb1e577cb9" "4f81886421185048bd186fbccc98d95fca9c8b6a401771b7457d81f749f5df75" "9dae95cdbed1505d45322ef8b5aa90ccb6cb59e0ff26fef0b8f411dfc416c552" "15990253bbcfb708ad6ee158d9969cf74be46e3fea2b35f1a0afbac7d4682fbf" default)))
  '(elpy-modules
    (quote
     (elpy-module-company elpy-module-eldoc elpy-module-flymake elpy-module-pyvenv elpy-module-yasnippet elpy-module-sane-defaults)))
+ '(elpy-rpc-python-command "/usr/local/bin/python3")
+ '(elpy-test-discover-runner-command (quote ("python3" "-m" "unittest")))
+ '(elpy-test-runner (quote elpy-test-discover-runner))
  '(nyan-mode t)
  '(package-selected-packages
    (quote
-    (json-mode aggressive-indent highlight-tail string-utils fish-mode column-marker web-mode sql-indent spaceline rope-read-mode org-agenda-property nyan-mode magit js2-mode jedi-direx helm-projectile helm-filesets helm-ag flycheck exec-path-from-shell elpy editorconfig csv-mode company-jedi anaconda-mode))))
+    (typescript-mode sr-speedbar atom-one-dark-theme multiple-cursors helm-company nose terraform-mode rainbow-delimiters git-timemachine json-mode aggressive-indent highlight-tail string-utils fish-mode column-marker web-mode sql-indent spaceline rope-read-mode org-agenda-property nyan-mode magit js2-mode jedi-direx helm-projectile helm-filesets helm-ag flycheck exec-path-from-shell elpy editorconfig csv-mode company-jedi anaconda-mode)))
+ '(pyvenv-mode t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+
+
+
+
+
+
+
+
+;; Bitbucket pull requests are kinda funky, it seems to try to just do the
+;; right thing, so there's no branches to include.
+;; https://bitbucket.org/<username>/<project>/pull-request/new
+(defun visit-bb-pull-request (repo)
+  (message repo)
+  (browse-url
+   (format "https://bitbucket.org/%s/pull-request/new?source=%s&t=1"
+       (replace-regexp-in-string
+        "\\`.+bitbucket\\.org:\\(.+\\)\\.git\\'" "\\1"
+        repo)
+       (magit-get-current-branch))))
+;; visit PR for github or bitbucket repositories with "v"
+(eval-after-load 'magit
+  '(define-key magit-mode-map "v"
+     #'endless/visit-pull-request-url))
