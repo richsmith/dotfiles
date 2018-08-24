@@ -217,6 +217,7 @@
 (setq vc-follow-symlinks nil)
 (setq gc-cons-threshold 100000000) ; attempt to stop emacs crashing in Helm
 (set-register ?e (cons 'file "~/.emacs"))
+(add-hook 'before-save-hook 'whitespace-cleanup)
 
 ;; Scrolling
 (setq scroll-step 1)
