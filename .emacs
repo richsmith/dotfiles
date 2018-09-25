@@ -11,33 +11,37 @@
 
 (when window-system (set-frame-size (selected-frame) 100 65))
 
-;; colours
-(set-background-color "white")
-
 (setq inhibit-startup-message t)
 (setq initial-scratch-message nil)
-(if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
-
-
+(tool-bar-mode -1)
+(scroll-bar-mode -1)
 ;; set frame title to buffer/filename followed by [username@machine]
 (add-hook 'window-configuration-change-hook
       (lambda ()
         (setq frame-title-format
           (concat
-           "%b ["
-           user-login-name "@" system-name "]"))))
+           "%b ("
+           user-login-name "@" system-name ")"))))
 
 
 ;;; ***************************************************************************
 ;;; Packages
 ;;;
+
+
+(use-package flycheck
+  :ensure t
+  :init (global-flycheck-mode))
+
+
 (setq package-archives '(("melpa" . "http://melpa.org/packages/")
                          ("gnu" . "http://elpa.gnu.org/packages/")))
 ;; Marmalade probably redundant compared to melpa
 ;; ("marmalade" . "http://marmalade-repo.org/packages/")
 
 
-(setq package-list '(editorconfig
+(setq package-list '(atom-one-dark-theme
+                     editorconfig
                      elpy
                      flycheck
                      helm
@@ -47,16 +51,20 @@
                      json-mode
                      magit
                      multiple-cursors
+                     nyan-mode
                      projectile
+                     terraform-mode
                      git-timemachine
                      web-mode))
+
+
 
 (if (eq system-type 'darwin)
  	(add-to-list 'package-list 'exec-path-from-shell))
 
 (package-initialize) ; activate all the packages (in particular autoloads)
 
-(or (file-exists-p package-user-dir) ; fetch the list of packages available 
+(or (file-exists-p package-user-dir) ; fetch the list of packages available
   (package-refresh-contents))
 
 (dolist (package package-list) ; install the missing packages
@@ -203,6 +211,7 @@
 ;;; ***************************************************************************
 ;;; Miscellaneous
 ;;;
+
 (setq-default indent-tabs-mode nil)
 (setq default-tab-width 4)
 (global-subword-mode 1)
@@ -217,6 +226,11 @@
 (setq vc-follow-symlinks nil)
 (setq gc-cons-threshold 100000000) ; attempt to stop emacs crashing in Helm
 (set-register ?e (cons 'file "~/.emacs"))
+
+;; visit PR for github or bitbucket repositories with "v"
+(eval-after-load 'magit
+  '(define-key magit-mode-map "v"
+     #'endless/visit-pull-request-url))
 
 ;; Scrolling
 (setq scroll-step 1)
@@ -236,10 +250,6 @@
 (column-number-mode t)     ; show column number
 
 (blink-cursor-mode -1) ; stop the cursor blinking
-
-; put the scroll bar on the right (consistency!)
-(setq scroll-bar-mode-explicit t)
-(set-scroll-bar-mode `right)
 
 ; stop at the end of the file, not just add lines
 (setq next-line-add-newlines nil)
@@ -300,8 +310,8 @@
 
 ;; make sure following are pip installed:
 ;; jedi importmagic autopep8 yapf
-(require 'nose)
-(add-hook 'python-mode-hook (lambda () (nose-mode t)))
+;; (require 'nose)
+;; (add-hook 'python-mode-hook (lambda () (nose-mode t)))
 (add-to-list 'load-path "~/.emacs.d/plugins")
 (elpy-enable)
 (setq elpy-rpc-python-command "python3")
@@ -476,17 +486,16 @@
  '(custom-enabled-themes (quote (atom-one-dark)))
  '(custom-safe-themes
    (quote
-    ("6dd2b995238b4943431af56c5c9c0c825258c2de87b6c936ee88d6bb1e577cb9" "4f81886421185048bd186fbccc98d95fca9c8b6a401771b7457d81f749f5df75" "9dae95cdbed1505d45322ef8b5aa90ccb6cb59e0ff26fef0b8f411dfc416c552" "15990253bbcfb708ad6ee158d9969cf74be46e3fea2b35f1a0afbac7d4682fbf" default)))
+    ("57f95012730e3a03ebddb7f2925861ade87f53d5bbb255398357731a7b1ac0e0" "76dc63684249227d64634c8f62326f3d40cdc60039c2064174a7e7a7a88b1587" "6dd2b995238b4943431af56c5c9c0c825258c2de87b6c936ee88d6bb1e577cb9" "4f81886421185048bd186fbccc98d95fca9c8b6a401771b7457d81f749f5df75" "9dae95cdbed1505d45322ef8b5aa90ccb6cb59e0ff26fef0b8f411dfc416c552" "15990253bbcfb708ad6ee158d9969cf74be46e3fea2b35f1a0afbac7d4682fbf" default)))
  '(elpy-modules
    (quote
     (elpy-module-company elpy-module-eldoc elpy-module-flymake elpy-module-pyvenv elpy-module-yasnippet elpy-module-sane-defaults)))
- '(elpy-rpc-python-command "/usr/local/bin/python3")
  '(elpy-test-discover-runner-command (quote ("python3" "-m" "unittest")))
  '(elpy-test-runner (quote elpy-test-discover-runner))
  '(nyan-mode t)
  '(package-selected-packages
    (quote
-    (typescript-mode sr-speedbar atom-one-dark-theme multiple-cursors helm-company nose terraform-mode rainbow-delimiters git-timemachine json-mode aggressive-indent highlight-tail string-utils fish-mode column-marker web-mode sql-indent spaceline rope-read-mode org-agenda-property nyan-mode magit js2-mode jedi-direx helm-projectile helm-filesets helm-ag flycheck exec-path-from-shell elpy editorconfig csv-mode company-jedi anaconda-mode)))
+    (use-package flymake-python-pyflakes php-mode yaml-mode atom-dark-theme typescript-mode sr-speedbar atom-one-dark-theme multiple-cursors helm-company nose terraform-mode rainbow-delimiters git-timemachine json-mode aggressive-indent highlight-tail string-utils fish-mode column-marker web-mode sql-indent spaceline rope-read-mode org-agenda-property nyan-mode magit js2-mode jedi-direx helm-projectile helm-filesets helm-ag flycheck exec-path-from-shell elpy editorconfig csv-mode company-jedi anaconda-mode)))
  '(pyvenv-mode t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -495,25 +504,5 @@
  ;; If there is more than one, they won't work right.
  )
 
-
-
-
-
-
-
-
-;; Bitbucket pull requests are kinda funky, it seems to try to just do the
-;; right thing, so there's no branches to include.
-;; https://bitbucket.org/<username>/<project>/pull-request/new
-(defun visit-bb-pull-request (repo)
-  (message repo)
-  (browse-url
-   (format "https://bitbucket.org/%s/pull-request/new?source=%s&t=1"
-       (replace-regexp-in-string
-        "\\`.+bitbucket\\.org:\\(.+\\)\\.git\\'" "\\1"
-        repo)
-       (magit-get-current-branch))))
-;; visit PR for github or bitbucket repositories with "v"
-(eval-after-load 'magit
-  '(define-key magit-mode-map "v"
-     #'endless/visit-pull-request-url))
+(provide '.emacs)
+;;; .emacs ends here
