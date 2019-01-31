@@ -1,5 +1,3 @@
-
-
 ;;; .emacs
 ;;; Rich Smith (rlsNO@SPAMhwyl.org)
 ;;; Reminder: C-x C-e to re-evaluate a line; M-x load-file to reload file
@@ -29,9 +27,7 @@
 ;;;
 
 
-(use-package flycheck
-  :ensure t
-  :init (global-flycheck-mode))
+
 
 
 (setq package-archives '(("melpa" . "http://melpa.org/packages/")
@@ -60,7 +56,7 @@
 
 
 (if (eq system-type 'darwin)
- 	(add-to-list 'package-list 'exec-path-from-shell))
+    (add-to-list 'package-list 'exec-path-from-shell))
 
 (package-initialize) ; activate all the packages (in particular autoloads)
 
@@ -69,7 +65,7 @@
 
 (dolist (package package-list) ; install the missing packages
   (unless (package-installed-p package)
-	(package-refresh-contents)
+    (package-refresh-contents)
     (package-install package)))
 
 
@@ -226,7 +222,7 @@
 (setq vc-follow-symlinks nil)
 (setq gc-cons-threshold 100000000) ; attempt to stop emacs crashing in Helm
 (set-register ?e (cons 'file "~/.emacs"))
-(add-hook 'before-save-hook 'whitespace-cleanup)
+; (add-hook 'before-save-hook 'whitespace-cleanup)
 
 ;; visit PR for github or bitbucket repositories with "v"
 (eval-after-load 'magit
@@ -242,6 +238,9 @@
 (global-set-key (kbd "M-n") 'scroll-up-preserve-location)
 (global-set-key (kbd "C-M-p") (kbd "C-u 8 C-p"))
 (global-set-key (kbd "C-M-n") (kbd "C-u 8 C-n"))
+(global-set-key (kbd "C-S-p") 'backward-sexp)
+(global-set-key (kbd "C-S-n") 'forward-sexp)
+
 
 ;; Display
 (setq-default transient-mark-mode t) ; show selections
@@ -314,6 +313,7 @@
 ;; (require 'nose)
 ;; (add-hook 'python-mode-hook (lambda () (nose-mode t)))
 (add-to-list 'load-path "~/.emacs.d/plugins")
+(package-initialize)
 (elpy-enable)
 (setq elpy-rpc-python-command "python3")
 (setq python-check-command "flake8")
@@ -403,7 +403,7 @@
 
 
 ;;; ***************************************************************************
-;;; Keys 
+;;; Keys
 ;;; (Keep at the bottom to avoid being clobbered by various modes)
 
 (global-set-key (kbd "C-x C-r") 'rename-current-buffer-file)
@@ -426,7 +426,7 @@
 (global-set-key (kbd "C-S-j")
                 (lambda ()
                   (interactive)
-                  (join-line -1))) 
+                  (join-line -1)))
 
 (autoload 'zap-up-to-char "misc"
   "Kill up to, but not including ARGth occurrence of CHAR.")
@@ -453,7 +453,6 @@
 (global-set-key (kbd "C-S-m") 'magit-status)
 (global-set-key (kbd "C-x C-g") 'magit-status)
 (global-set-key (kbd "C-z") 'repeat)
-
 
 (projectile-global-mode)
 (setq projectile-completion-system 'helm)
@@ -491,12 +490,14 @@
  '(elpy-modules
    (quote
     (elpy-module-company elpy-module-eldoc elpy-module-flymake elpy-module-pyvenv elpy-module-yasnippet elpy-module-sane-defaults)))
+ '(elpy-rpc-python-command "python3")
+ '(elpy-syntax-check-command "flake8")
  '(elpy-test-discover-runner-command (quote ("python3" "-m" "unittest")))
  '(elpy-test-runner (quote elpy-test-discover-runner))
  '(nyan-mode t)
  '(package-selected-packages
    (quote
-    (use-package flymake-python-pyflakes php-mode yaml-mode atom-dark-theme typescript-mode sr-speedbar atom-one-dark-theme multiple-cursors helm-company nose terraform-mode rainbow-delimiters git-timemachine json-mode aggressive-indent highlight-tail string-utils fish-mode column-marker web-mode sql-indent spaceline rope-read-mode org-agenda-property nyan-mode magit js2-mode jedi-direx helm-projectile helm-filesets helm-ag flycheck exec-path-from-shell elpy editorconfig csv-mode company-jedi anaconda-mode)))
+    (browse-kill-ring use-package flymake-python-pyflakes php-mode yaml-mode atom-dark-theme typescript-mode sr-speedbar atom-one-dark-theme multiple-cursors helm-company nose terraform-mode rainbow-delimiters git-timemachine json-mode aggressive-indent highlight-tail string-utils fish-mode column-marker web-mode sql-indent spaceline rope-read-mode org-agenda-property nyan-mode magit js2-mode jedi-direx helm-projectile helm-filesets helm-ag flycheck exec-path-from-shell elpy editorconfig csv-mode company-jedi anaconda-mode)))
  '(pyvenv-mode t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
