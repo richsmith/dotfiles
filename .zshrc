@@ -58,6 +58,8 @@ ZSH_THEME="rich"
 
 # Would you like to use another custom folder than $ZSH/custom?
 # ZSH_CUSTOM=/path/to/new-custom-folder
+DISABLE_UPDATE_PROMPT=true
+source $ZSH/oh-my-zsh.sh
 
 # Which plugins would you like to load?
 # Standard plugins can be found in ~/.oh-my-zsh/plugins/*
@@ -72,7 +74,7 @@ plugins=(
     web-search
 )
 
-source $ZSH/oh-my-zsh.sh
+
 
 # User configuration
 
@@ -87,6 +89,9 @@ if [[ -n $SSH_CONNECTION ]]; then
 else
   export EDITOR='emacs -nw'
 fi
+
+
+set -o ignoreeof
 
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
@@ -109,3 +114,9 @@ fi
 # tabtab source for sls package
 # uninstall by removing these lines or running `tabtab uninstall sls`
 [[ -f /home/rls/code/serverless-api/node_modules/tabtab/.completions/sls.zsh ]] && . /home/rls/code/serverless-api/node_modules/tabtab/.completions/sls.zsh
+
+# tabtab source for slss package
+# uninstall by removing these lines or running `tabtab uninstall slss`
+[[ -f /home/rls/code/serverless-api/node_modules/tabtab/.completions/slss.zsh ]] && . /home/rls/code/serverless-api/node_modules/tabtab/.completions/slss.zsh
+
+source /home/rls/.config/broot/launcher/bash/br
