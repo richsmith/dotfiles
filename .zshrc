@@ -1,4 +1,4 @@
-export PATH=$HOME/bin:/usr/local/bin:.local/bin:$PATH
+export PATH=$HOME/bin:/usr/local/bin:$HOME/.local/bin:$PATH
 export ZSH="/home/$USER/.oh-my-zsh"
 
 ZSH_THEME="robbyrussell"
