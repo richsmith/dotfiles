@@ -67,6 +67,16 @@ else
   export EDITOR='emacs -nw'
 fi
 
+# Execute any specific code for this box/user
+CUSTOM='.zshcustom'
+if [ -f ~/$CUSTOM ]; then
+    source ~/$CUSTOM
+elif [ -f $XDG_CONFIG_HOME/$CUSTOM ]; then
+    source $XDG_CONFIG_HOME/$CUSTOM
+fi
+
+
+source /opt/conda/etc/profile.d/conda.sh
 
 set -o ignoreeof
 
