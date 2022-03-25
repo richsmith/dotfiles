@@ -1,1 +1,7 @@
+# we don't want anything history-related in VC
 *_history
+
+# ignore everything under emacs but the actual config files
+emacs/**
+!emacs/init.el
+!emacs/early-init.el
