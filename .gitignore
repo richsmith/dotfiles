@@ -4,3 +4,5 @@
 # ignore everything under emacs but the actual config files
 emacs/**
 !emacs/*.el
+emacs/custom.el
+emacs/local.el

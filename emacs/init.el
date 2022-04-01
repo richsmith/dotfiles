@@ -22,8 +22,13 @@
 ;; ***************************************************************************
 ;; Files
 ;;
+; A place for emacs to update variables
 (let ((custom-file (expand-file-name "custom.el" user-emacs-directory)))
   (load custom-file))
+; A file where localised settings can be defined; load it if present
+(let ((local-file (expand-file-name "local.el" user-emacs-directory)))
+  (if (file-exists-p local-file)
+      (load local-file)))
 
 
 
@@ -42,14 +47,17 @@
 ;; Essentials
 (use-package editorconfig)
 (use-package helm
+  :bind
+  ("M-x" . helm-M-x)
+  ("C-x C-f" . helm-find-files)
   :config
   (use-package helm-ag)
   (helm-mode)
-  (global-set-key (kbd "M-x") 'helm-M-x)
-  (global-set-key (kbd "C-x C-f") 'helm-find-files)
+  ;; (global-set-key (kbd "M-x") 'helm-M-x)
+  ;; (global-set-key (kbd "C-x C-f") 'helm-find-files)
   (setq helm-delete-minibuffer-contents-from-point 1)
   (setq helm-exit-idle-delay 0)
-  (set-face-attribute 'helm-selection nil :background "blue" :foreground "white")
+  ;; (set-face-attribute 'helm-selection nil :background "blue" :foreground "white")
   (setq helm-split-window-in-side-p t)
   ; below seems to stop emacs crashing using Helm
   (setq gc-cons-threshold 100000000))
@@ -65,10 +73,13 @@
 
 ;; Version control
 (use-package magit
-             :config
-             (global-set-key (kbd "C-S-m") 'magit-status)
-             (define-key magit-mode-map "v"
-               #'endless/visit-pull-request-url))
+  :init
+  (setq magit-save-repository-buffers nil)
+  :bind
+  ("C-S-m" . magit-status)
+  :config
+  (define-key magit-mode-map "v"
+    #'endless/visit-pull-request-url))
 (use-package git-gutter
   :hook (prog-mode . git-gutter-mode)
   :config
@@ -96,7 +107,8 @@
   (setq elpy-rpc-python-command "python3")
   (define-key elpy-mode-map (kbd "M-,") 'pop-tag-mark))
 (use-package flycheck)
-(use-package python-isort)
+(use-package python-isort
+  :hook (python-mode . py-isort-enable-on-save))
 (use-package python-black)
 
 
@@ -236,7 +248,7 @@
 
 (defun goto-line-with-feedback (&optional line)
   "Show line numbers temporarily, while prompting for the line number input"
-  (let ((initial-mode linum-mode))
+  (let ((initial-mode nil))
       (interactive "P")
       (if line
         (goto-line line)
@@ -277,19 +289,19 @@
 ;;; ***************************************************************************
 ;;; Miscellaneous
 ;;;
-
-(setq-default indent-tabs-mode nil)
-(setq default-tab-width 4)
 (global-subword-mode 1)
-(setq dabbrev-case-fold-search nil)
-(put 'upcase-region 'disabled nil)
 (delete-selection-mode 1)
+(put 'upcase-region 'disabled nil)
+(setq-default indent-tabs-mode nil)
+(setq-default dired-listing-switches "-alhv")
+(setq default-tab-width 4)
+(setq dabbrev-case-fold-search nil)
 (setq sentence-end-double-space nil)
 (setq fill-column 100)
 (setq comment-fill-column 100)
 (setq git-commit-summary-max-length 72)
-(setq-default dired-listing-switches "-alhv")
 (setq vc-follow-symlinks nil)
+(setq confirm-kill-processes nil)
 
 ;; Scrolling
 (setq scroll-step 1)
