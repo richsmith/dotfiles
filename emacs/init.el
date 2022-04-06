@@ -5,12 +5,11 @@
 ;; ***************************************************************************
 ;; Windowing stuff (keep at top to turn off GUI items as soon as possible)
 ;;
-(when window-system (set-frame-size (selected-frame) 100 65))
 (setq inhibit-startup-message t)
 (setq initial-scratch-message nil)
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
-;; set frame title to buffer/filename followed by [username@machine]
+;; set frame title to buffer/filename followed by (username@host)
 (add-hook 'window-configuration-change-hook
       (lambda ()
         (setq frame-title-format
@@ -45,22 +44,23 @@
 (setq use-package-always-ensure t)
 
 ;; Essentials
-(use-package editorconfig)
 (use-package helm
+  :init
+  (setq helm-delete-minibuffer-contents-from-point 1)
+  (setq helm-exit-idle-delay 0)
+  (setq helm-split-window-in-side-p t)
+  ; below seems to stop emacs crashing using Helm
+  (setq gc-cons-threshold 100000000)
   :bind
   ("M-x" . helm-M-x)
   ("C-x C-f" . helm-find-files)
   :config
-  (use-package helm-ag)
   (helm-mode)
-  ;; (global-set-key (kbd "M-x") 'helm-M-x)
-  ;; (global-set-key (kbd "C-x C-f") 'helm-find-files)
-  (setq helm-delete-minibuffer-contents-from-point 1)
-  (setq helm-exit-idle-delay 0)
   ;; (set-face-attribute 'helm-selection nil :background "blue" :foreground "white")
-  (setq helm-split-window-in-side-p t)
-  ; below seems to stop emacs crashing using Helm
-  (setq gc-cons-threshold 100000000))
+  (use-package helm-ag)
+  (use-package helm-system-packages)
+  (use-package helm-descbinds
+    :config (helm-descbinds-mode)))
 (use-package projectile
   :config
   (projectile-global-mode)
@@ -69,7 +69,6 @@
     :config
     (setq projectile-enable-caching nil)
     (helm-projectile-on)))
-(use-package git-timemachine)
 
 ;; Version control
 (use-package magit
@@ -89,7 +88,7 @@
   (define-fringe-bitmap 'git-gutter-fr:added [224] nil nil '(center repeated))
   (define-fringe-bitmap 'git-gutter-fr:modified [224] nil nil '(center repeated))
   (define-fringe-bitmap 'git-gutter-fr:deleted [128 192 224 240] nil nil 'bottom))
-
+(use-package git-timemachine)
 
 ;; Python stuff
 ;; (use-package lsp-mode
@@ -107,8 +106,7 @@
   (setq elpy-rpc-python-command "python3")
   (define-key elpy-mode-map (kbd "M-,") 'pop-tag-mark))
 (use-package flycheck)
-(use-package python-isort
-  :hook (python-mode . py-isort-enable-on-save))
+(use-package python-isort)
 (use-package python-black)
 
 
@@ -134,6 +132,8 @@
   :mode ("\\.md\\'" . markdown-mode))
 (use-package yaml-mode)
 
+;; Misc
+(use-package editorconfig)
 
 ;; Aesthetics
 (use-package emojify
@@ -248,15 +248,16 @@
 
 (defun goto-line-with-feedback (&optional line)
   "Show line numbers temporarily, while prompting for the line number input"
-  (let ((initial-mode nil))
-      (interactive "P")
-      (if line
-        (goto-line line)
-        (progn
-          (linum-mode 1)
-          (let ((line (read-number "Line: ")))
-            (goto-line line))
-          (linum-mode initial-mode)))))
+  (interactive "P")
+  (if line
+      (goto-line line)
+    (let ((initial-linum (if (bound-and-true-p linum-mode) t -1)))
+      (unwind-protect
+          (progn
+            (linum-mode 1)
+            (let ((line (read-number "Line: ")))
+              (goto-line line)))
+        (linum-mode initial-linum)))))
 
 (defun rename-current-buffer-file ()
   "Renames current buffer and file it is visiting."
@@ -274,6 +275,11 @@
           (set-buffer-modified-p nil)
           (message "File '%s' successfully renamed to '%s'"
                    name (file-name-nondirectory new-name)))))))
+
+(defun mask-text (start end)
+  ""
+  (interactive "r")
+  (insert-char 'X' 5))
 
 (defun scroll-up-preserve-location ()
   (interactive)
@@ -302,6 +308,13 @@
 (setq git-commit-summary-max-length 72)
 (setq vc-follow-symlinks nil)
 (setq confirm-kill-processes nil)
+(desktop-save-mode 1)
+(setq desktop-load-locked-desktop t)
+(setq savehist-file (expand-file-name "savehist" user-emacs-directory))
+(savehist-mode 1)
+(setq savehist-save-minibuffer-history 1)
+(setq savehist-additional-variables
+      '(kill-ring search-ring regexp-search-ring))
 
 ;; Scrolling
 (setq scroll-step 1)
@@ -466,3 +479,26 @@
 (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action)
 
 (setq tern-command '("tern" "--no-port-file"))
+
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(custom-enabled-themes '(atom-one-dark))
+ '(custom-safe-themes
+   '("37768a79b479684b0756dec7c0fc7652082910c37d8863c35b702db3f16000f8" "171d1ae90e46978eb9c342be6658d937a83aaa45997b1d7af7657546cae5985b" "57f95012730e3a03ebddb7f2925861ade87f53d5bbb255398357731a7b1ac0e0" "76dc63684249227d64634c8f62326f3d40cdc60039c2064174a7e7a7a88b1587" "6dd2b995238b4943431af56c5c9c0c825258c2de87b6c936ee88d6bb1e577cb9" "4f81886421185048bd186fbccc98d95fca9c8b6a401771b7457d81f749f5df75" "9dae95cdbed1505d45322ef8b5aa90ccb6cb59e0ff26fef0b8f411dfc416c552" "15990253bbcfb708ad6ee158d9969cf74be46e3fea2b35f1a0afbac7d4682fbf" default))
+ '(elpy-modules
+   '(elpy-module-company elpy-module-eldoc elpy-module-flymake elpy-module-pyvenv elpy-module-yasnippet elpy-module-sane-defaults))
+ '(elpy-rpc-python-command "python3")
+ '(elpy-syntax-check-command "flake8")
+ '(package-selected-packages
+   '(kubernetes rainbow-mode highlight-indent-guides py-isort underline-with-char nord-theme avy python-isort python-black browse-kill-ring use-package flymake-python-pyflakes php-mode yaml-mode atom-dark-theme typescript-mode sr-speedbar atom-one-dark-theme multiple-cursors helm-company nose terraform-mode rainbow-delimiters git-timemachine json-mode aggressive-indent highlight-tail string-utils fish-mode column-marker web-mode sql-indent spaceline rope-read-mode org-agenda-property nyan-mode magit js2-mode jedi-direx helm-projectile helm-filesets helm-ag flycheck exec-path-from-shell elpy editorconfig csv-mode company-jedi anaconda-mode))
+ '(pyvenv-mode t)
+)
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
