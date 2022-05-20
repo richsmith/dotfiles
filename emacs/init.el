@@ -49,14 +49,16 @@
   (setq helm-delete-minibuffer-contents-from-point 1)
   (setq helm-exit-idle-delay 0)
   (setq helm-split-window-in-side-p t)
-  ; below seems to stop emacs crashing using Helm
-  (setq gc-cons-threshold 100000000)
+  ; uncomment below if Helm starts crashing
+  ; (setq gc-cons-threshold 100000000)
   :bind
   ("M-x" . helm-M-x)
   ("C-x C-f" . helm-find-files)
   :config
   (helm-mode)
-  ;; (set-face-attribute 'helm-selection nil :background "blue" :foreground "white")
+  ; uncomment below for extra contrast
+  ; (set-face-attribute
+  ; 'helm-selection nil :background "blue" :foreground "white")
   (use-package helm-ag)
   (use-package helm-system-packages)
   (use-package helm-descbinds
@@ -131,6 +133,7 @@
 (use-package markdown-mode
   :mode ("\\.md\\'" . markdown-mode))
 (use-package yaml-mode)
+(use-package dotenv-mode)
 
 ;; Misc
 (use-package editorconfig)
@@ -143,6 +146,7 @@
   (nyan-mode t))
 (use-package atom-one-dark-theme)
 (use-package nord-theme)
+(use-package beacon)
 
 
 
@@ -152,9 +156,10 @@
 
 ;; Put autosave and backup files in a temp directory rather than strewn everywhere
 (setq backup-directory-alist
-      `((".*" . ,temporary-file-directory)))
+      `(("." . ,(concat user-emacs-directory "backups"))))
 (setq auto-save-file-name-transforms
       `((".*" ,temporary-file-directory t)))
+(setq create-lockfiles nil)
 
 
 ;;; ***************************************************************************
@@ -276,17 +281,24 @@
           (message "File '%s' successfully renamed to '%s'"
                    name (file-name-nondirectory new-name)))))))
 
-(defun mask-text (start end)
-  ""
-  (interactive "r")
-  (insert-char 'X' 5))
+(defun mask-text (start end mask-char)
+  "Overwrite the region with the selected mask character."
+ (interactive "@*r\ncMasking character: ")
+ (let ((region-length (- end start))
+       (original-point (point)))
+  (delete-region start end)
+  (goto-char start)
+  (insert-char mask-char region-length)
+  (goto-char original-point)))
 
 (defun scroll-up-preserve-location ()
+  "Scrolls up a line without moving the cursor position"
   (interactive)
   (scroll-up-line)
   (next-line))
 
 (defun scroll-down-preserve-location ()
+  "Scrolls down a line without moving the cursor position"
   (interactive)
   (scroll-down-line)
   (previous-line))
@@ -341,7 +353,7 @@
 ; stop at the end of the file, not just add lines
 (setq next-line-add-newlines nil)
 
-; turn off that BLOODY ANNOYING BEEP (only way that seems guaranteed to work!)
+; turn off that BLOODY ANNOYING BEEP
 (defun do-not-ring-bloody-bell () nil)
 (setq ring-bell-function `do-not-ring-bloody-bell)
 
@@ -354,9 +366,22 @@
         ad-do-it
       (fset 'one-window-p (symbol-function 'orig-one-window-p)))))
 
-
 (setq highlight-tail-mode 1)
 (global-set-key (kbd "C-S-<mouse-1>") 'mc/add-cursor-on-click)
+
+; Confirm C-x C-c
+(add-hook 'kill-emacs-query-functions
+          (lambda () (y-or-n-p "Really exit Emacs? "))
+          'append)
+
+; Use a hook so the message doesn't get clobbered by other messages.
+(add-hook 'emacs-startup-hook
+          (lambda ()
+            (message "Emacs ready in %s with %d garbage collections."
+                     (format "%.2f seconds"
+                             (float-time
+                              (time-subtract after-init-time before-init-time)))
+                     gcs-done)))
 
 
 ;; ***************************************************************************
@@ -470,11 +495,9 @@
 (define-key global-map (kbd "C-x O") 'previous-multiframe-window)
 (global-set-key (kbd "C-x t") 'rotate-windows)
 
+(global-set-key (kbd "C-M-g") 'top-level)
 
 (global-set-key (kbd "C-z") 'repeat)
-
-(global-set-key (kbd "C-h") 'delete-backward-char)
-(global-set-key (kbd "s-h") 'help-command)
 
 (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action)
 
