@@ -93,23 +93,60 @@
 (use-package git-timemachine)
 
 ;; Python stuff
-;; (use-package lsp-mode
-;;   :hook ((python-mode java-mode) . lsp-deferred)
-;;   :commands lsp)
-;; (use-package lsp-pyright
-;;   :hook (python-mode . (lambda () (require 'lsp-pyright)))
-;;   :init (when (executable-find "python3")
-;;           (setq lsp-pyright-python-executable-cmd "python3")))
-;; (use-package lsp-ui
-;;   :commands lsp-ui-mode)
-(use-package elpy
-  :config
-  (elpy-enable)
-  (setq elpy-rpc-python-command "python3")
-  (define-key elpy-mode-map (kbd "M-,") 'pop-tag-mark))
-(use-package flycheck)
-(use-package python-isort)
-(use-package python-black)
+(use-package eglot
+  :ensure t
+  :defer t
+  :hook (python-mode . eglot-ensure)
+  :init
+  (setq eglot-workspace-configuration
+        '((pylsp
+           (plugins
+            (pycodestyle (enabled . nil)))))))
+
+(use-package python-isort
+  :after python)
+
+(use-package blacken
+  :after python)
+
+;; For local saves add to .dir-locals.el
+;; ((python-mode
+;;  (eval python-isort-on-save-mode)
+;;  (eval blacken-mode)))
+
+(use-package direnv
+ :config
+ (direnv-mode))
+
+
+
+
+
+;; Provide drop-down completion.
+(use-package company
+  :ensure t
+  :defer t
+  :custom
+  ;; Search other buffers with the same modes for completion instead of
+  ;; searching all other buffers.
+  (company-dabbrev-other-buffers t)
+  (company-dabbrev-code-other-buffers t)
+  ;; M-<num> to select an option according to its number.
+  (company-show-numbers t)
+  ;; Only 2 letters required for completion to activate.
+  (company-minimum-prefix-length 3)
+  ;; Do not downcase completions by default.
+  (company-dabbrev-downcase nil)
+  ;; Even if I write something with the wrong case,
+  ;; provide the correct casing.
+  (company-dabbrev-ignore-case t)
+  ;; company completion wait
+  (company-idle-delay 0.2)
+  ;; No company-mode in shell & eshell
+  (company-global-modes '(not eshell-mode shell-mode))
+  ;; Use company with text and programming modes.
+    :hook ((text-mode . company-mode)
+           (prog-mode . company-mode)))
 
 
 ;; Other languages etc.
@@ -139,14 +176,17 @@
 (use-package editorconfig)
 
 ;; Aesthetics
-(use-package emojify
-  :hook (after-init . global-emojify-mode))
+(use-package minions
+  :config (minions-mode 1))
+(use-package emojify)
 (use-package nyan-mode
   :config
   (nyan-mode t))
-(use-package atom-one-dark-theme)
-(use-package nord-theme)
 (use-package beacon)
+
+(use-package nord-theme)
+(use-package atom-one-dark-theme)
+(load-theme 'atom-one-dark t)
 
 
 
@@ -320,13 +360,13 @@
 (setq git-commit-summary-max-length 72)
 (setq vc-follow-symlinks nil)
 (setq confirm-kill-processes nil)
-(desktop-save-mode 1)
-(setq desktop-load-locked-desktop t)
-(setq savehist-file (expand-file-name "savehist" user-emacs-directory))
-(savehist-mode 1)
-(setq savehist-save-minibuffer-history 1)
-(setq savehist-additional-variables
-      '(kill-ring search-ring regexp-search-ring))
+;; (desktop-save-mode 1)
+;; (setq desktop-load-locked-desktop t)
+;; (setq savehist-file (expand-file-name "savehist" user-emacs-directory))
+;; (savehist-mode 1)
+;; (setq savehist-save-minibuffer-history 1)
+;; (setq savehist-additional-variables
+;;       '(kill-ring search-ring regexp-search-ring))
 
 ;; Scrolling
 (setq scroll-step 1)
@@ -422,14 +462,14 @@
 
 ;; make sure following are pip installed:
 ;; jedi importmagic autopep8 yapf
-(setq python-check-command "flake8")
-(highlight-indentation-mode -1)
-(setq python-shell-interpreter "ipython3"
-      python-shell-interpreter-args "-i --simple-prompt")
+;; (setq python-check-command "flake8")
+;; (highlight-indentation-mode -1)
+;; (setq python-shell-interpreter "ipython3"
+;;       python-shell-interpreter-args "-i --simple-prompt")
 
-(setq python-shell-completion-native nil)
-(setq python-shell-native-complete nil)
-(add-to-list 'python-shell-completion-native-disabled-interpreters "python3")
+;; (setq python-shell-completion-native nil)
+;; (setq python-shell-native-complete nil)
+;; (add-to-list 'python-shell-completion-native-disabled-interpreters "python3")
 
 
 
