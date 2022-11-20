@@ -33,39 +33,24 @@ export UPDATE_ZSH_DAYS=28
 
 HIST_STAMPS="yyyy-mm-dd"
 
+# define before sourcing oh-my-zsh.sh
+plugins=(
+    kubectl
+    git
+    emacs
+    dirhistory
+    pip
+    web-search
+)
+
 # Would you like to use another custom folder than $ZSH/custom?
 # ZSH_CUSTOM=/path/to/new-custom-folder
 DISABLE_UPDATE_PROMPT=true
 source $ZSH/oh-my-zsh.sh
 
-# Which plugins would you like to load?
-# Standard plugins can be found in ~/.oh-my-zsh/plugins/*
-# Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
-# Example format: plugins=(rails git textmate ruby lighthouse)
-# Add wisely, as too many plugins slow down shell startup.
-plugins=(
-    git,
-    emacs,
-    dirhistory,
-    pip,
-    web-search
-)
-
-
-
 # User configuration
-
-# export MANPATH="/usr/local/man:$MANPATH"
-
-# You may need to manually set your language environment
-# export LANG=en_US.UTF-8
-
-# Preferred editor for local and remote sessions
-if [[ -n $SSH_CONNECTION ]]; then
-  export EDITOR='emacs -nw'
-else
-  export EDITOR='emacs -nw'
-fi
+export LANG=en_UK.UTF-8
+export EDITOR='emacs -nw'
 
 # Execute any specific code for this box/user
 CUSTOM='.zshcustom'
@@ -75,8 +60,10 @@ elif [ -f $XDG_CONFIG_HOME/$CUSTOM ]; then
     source $XDG_CONFIG_HOME/$CUSTOM
 fi
 
+eval "$(direnv hook zsh)"
 
-source /opt/conda/etc/profile.d/conda.sh
+
+# source /opt/conda/etc/profile.d/conda.sh
 
 set -o ignoreeof
 
@@ -95,3 +82,14 @@ set -o ignoreeof
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
+
+# History ######################################################################
+HISTSIZE=100000
+setopt INC_APPEND_HISTORY        # Write to the history file immediately, not when the shell exits.
+setopt SHARE_HISTORY             # Share history between all sessions.
+setopt HIST_EXPIRE_DUPS_FIRST    # Expire duplicate entries first when trimming history.
+setopt HIST_IGNORE_DUPS          # Don't record an entry that was just recorded again.
+setopt HIST_FIND_NO_DUPS         # Do not display a line previously found.
+setopt HIST_IGNORE_SPACE         # Don't record an entry starting with a space.
+setopt HIST_REDUCE_BLANKS        # Remove superfluous blanks before recording entry.
+setopt HIST_VERIFY               # Don't execute immediately upon history expansion.

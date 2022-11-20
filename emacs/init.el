@@ -59,7 +59,9 @@
   ; uncomment below for extra contrast
   ; (set-face-attribute
   ; 'helm-selection nil :background "blue" :foreground "white")
-  (use-package helm-ag)
+  (use-package helm-ag
+    :init
+    (setq helm-ag-use-grep-ignore-list 1))
   (use-package helm-system-packages)
   (use-package helm-descbinds
     :config (helm-descbinds-mode)))
@@ -92,6 +94,15 @@
   (define-fringe-bitmap 'git-gutter-fr:deleted [128 192 224 240] nil nil 'bottom))
 (use-package git-timemachine)
 
+
+(use-package tree-sitter-langs :ensure t)
+(use-package tree-sitter
+  :ensure t
+  :after tree-sitter-langs
+  :config
+  (global-tree-sitter-mode)
+  (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
+
 ;; Python stuff
 (use-package eglot
   :ensure t
@@ -102,6 +113,7 @@
         '((pylsp
            (plugins
             (pycodestyle (enabled . nil)))))))
+
 
 (use-package python-isort
   :after python)
@@ -157,7 +169,9 @@
   :config
   (setq js-indent-level 2))
   (lambda () (tern-mode t))
-  (lambda () (flycheck-mode t))
+(lambda () (flycheck-mode t))
+(use-package typescript-mode
+  :mode ("\.tsx$"))
 (use-package web-mode
   :mode ("\\.ejs\\'" . web-mode)
   :config
