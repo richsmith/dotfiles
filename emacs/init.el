@@ -104,6 +104,8 @@
   (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
 
 ;; Python stuff
+;; Recommend installing
+;; pip install pyls-black pyls-isort pyls-mypy
 (use-package eglot
   :ensure t
   :defer t
