@@ -46,6 +46,8 @@ plugins=(
 # Would you like to use another custom folder than $ZSH/custom?
 # ZSH_CUSTOM=/path/to/new-custom-folder
 DISABLE_UPDATE_PROMPT=true
+
+export XDG_CONFIG_HOME=$HOME/.config
 export ZSH_COMPDUMP=$ZSH/cache/.zcompdump-$HOST
 source $ZSH/oh-my-zsh.sh
 
@@ -56,11 +58,11 @@ export EDITOR='emacs -nw'
 umask u=rwx,g=,o=
 
 # Execute any specific code for this box/user
-CUSTOM='.zshcustom'
-if [ -f ~/$CUSTOM ]; then
+ZSH_CUSTOM='.zshcustom'
+if [ -f ~/$ZSH_CUSTOM ]; then
     source ~/$CUSTOM
-elif [ -f $XDG_CONFIG_HOME/$CUSTOM ]; then
-    source $XDG_CONFIG_HOME/$CUSTOM
+elif [ -f $XDG_CONFIG_HOME/$ZSH_CUSTOM ]; then
+    source $XDG_CONFIG_HOME/$ZSH_CUSTOM
 fi
 
 eval "$(direnv hook zsh)"
@@ -88,6 +90,7 @@ set -o ignoreeof
 
 # History ######################################################################
 HISTSIZE=100000
+export HISTFILE=$XDG_CONFIG_HOME/.zsh_history
 setopt INC_APPEND_HISTORY        # Write to the history file immediately, not when the shell exits.
 setopt SHARE_HISTORY             # Share history between all sessions.
 setopt HIST_EXPIRE_DUPS_FIRST    # Expire duplicate entries first when trimming history.
