@@ -52,6 +52,8 @@ source $ZSH/oh-my-zsh.sh
 export LANG=en_UK.UTF-8
 export EDITOR='emacs -nw'
 
+umask u=rwx,g=,o=
+
 # Execute any specific code for this box/user
 CUSTOM='.zshcustom'
 if [ -f ~/$CUSTOM ]; then
