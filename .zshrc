@@ -52,17 +52,18 @@ export ZSH_COMPDUMP=$ZSH/cache/.zcompdump-$HOST
 source $ZSH/oh-my-zsh.sh
 
 # User configuration
-export LANG=en_UK.UTF-8
+export LANG=en_GB.UTF-8
+
 export EDITOR='emacs -nw'
 
 umask u=rwx,g=,o=
 
 # Execute any specific code for this box/user
-ZSH_CUSTOM='.zshcustom'
-if [ -f ~/$ZSH_CUSTOM ]; then
-    source ~/$CUSTOM
-elif [ -f $XDG_CONFIG_HOME/$ZSH_CUSTOM ]; then
-    source $XDG_CONFIG_HOME/$ZSH_CUSTOM
+ZSH_LOCAL='zshlocal'
+if [ -f ~/.$ZSH_LOCAL ]; then
+    source ~/.$ZSH_LOCAL
+elif [ -f $XDG_CONFIG_HOME/$ZSH_LOCAL ]; then
+    source $XDG_CONFIG_HOME/$ZSH_LOCAL
 fi
 
 eval "$(direnv hook zsh)"
