@@ -1,10 +1,8 @@
 ;;; Rich Smith (rlsNO@SPAMhwyl.org)
 
-
-
-;; ***************************************************************************
-;; Windowing stuff (keep at top to turn off GUI items as soon as possible)
-;;
+;;; ***************************************************************************
+;;; Windowing stuff (keep at top to turn off GUI items as soon as possible)
+;;;
 (setq inhibit-startup-message t)
 (setq initial-scratch-message nil)
 (tool-bar-mode -1)
@@ -18,22 +16,24 @@
            user-login-name "@" system-name ")"))))
 
 
-;; ***************************************************************************
-;; Files
-;;
-; A place for emacs to update variables
+;;; ***************************************************************************
+;;; Files
+;;;
+
+;; A place for emacs to update variables
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 (load custom-file)
-; A file where localised settings can be defined; load it if present
+;; A file where machine-localised settings can be defined; load it if present
 (let ((local-file (expand-file-name "local.el" user-emacs-directory)))
   (if (file-exists-p local-file)
       (load local-file)))
 
 
-
 ;;; ***************************************************************************
 ;;; Packages
 ;;;
+
+;; **** Setup ****
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
 (package-initialize)
@@ -43,36 +43,162 @@
  (package-install 'use-package))
 (setq use-package-always-ensure t)
 
-;; Essentials
-(use-package helm
+
+;; Use straight for package management
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+      (bootstrap-version 6))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+
+;; **** Core stuff ****
+(use-package emacs
   :init
-  (setq helm-delete-minibuffer-contents-from-point 1)
-  (setq helm-exit-idle-delay 0)
-  (setq helm-split-window-in-side-p t)
-  ; uncomment below if Helm starts crashing
-  ; (setq gc-cons-threshold 100000000)
+  ;; Do not allow the cursor in the minibuffer prompt
+  (setq minibuffer-prompt-properties
+        '(read-only t cursor-intangible t face minibuffer-prompt))
+  (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode))
+
+(use-package auto-package-update
+  :config
+  (setq auto-package-update-delete-old-versions t)
+  (setq auto-package-update-hide-results t)
+  (auto-package-update-maybe))
+
+(use-package vertico
+  :init
+  (vertico-mode)
+  (setq vertico-scroll-margin 5)
+  (setq vertico-count 25))
+
+(use-package consult
+  :bind (("C-c h" . consult-history)
+         ("C-c m" . consult-mode-command)
+         ("C-c k" . consult-kmacro)
+         ;; C-x bindings (ctl-x-map)
+         ("C-x M-:" . consult-complex-command)
+         ("C-x b" . consult-buffer)
+         ("C-x 4 b" . consult-buffer-other-window)
+         ("C-x 5 b" . consult-buffer-other-frame)
+         ("C-x r b" . consult-bookmark)
+         ("C-x p b" . consult-project-buffer)
+         ;; Custom M-# bindings for fast register access
+         ("M-#" . consult-register-load)
+         ("M-'" . consult-register-store)          ;; orig. abbrev-prefix-mark (unrelated)
+         ("C-M-#" . consult-register)
+         ;; Other custom bindings
+         ("M-y" . consult-yank-pop)                ;; orig. yank-pop
+         ;; M-g bindings (goto-map)
+         ("M-g e" . consult-compile-error)
+         ("M-g f" . consult-flymake)               ;; Alternative: consult-flycheck
+         ("M-g g" . consult-goto-line)             ;; orig. goto-line
+         ("M-g M-g" . consult-goto-line)           ;; orig. goto-line
+         ("M-g l" . consult-goto-line)             ;; orig. goto-line
+         ("M-g M-l" . consult-goto-line)           ;; orig. goto-line
+         ("M-g o" . consult-outline)               ;; Alternative: consult-org-heading
+         ("M-g m" . consult-mark)
+         ("M-g k" . consult-global-mark)
+         ("M-g i" . consult-imenu)
+         ("M-g I" . consult-imenu-multi)
+         ;; M-s bindings (search-map)
+         ("M-s d" . consult-find)
+         ("M-s D" . consult-locate)
+         ("M-s g" . consult-grep)
+         ("M-s G" . consult-git-grep)
+         ("M-s r" . consult-ripgrep)
+         ("M-s l" . consult-line)
+         ("M-s L" . consult-line-multi)
+         ("M-s m" . consult-multi-occur)
+         ("M-s k" . consult-keep-lines)
+         ("M-s u" . consult-focus-lines)
+         ;; Isearch integration
+         ("M-s e" . consult-isearch-history)
+         :map isearch-mode-map
+         ("M-e" . consult-isearch-history)         ;; orig. isearch-edit-string
+         ("M-s e" . consult-isearch-history)       ;; orig. isearch-edit-string
+         ("M-s l" . consult-line)                  ;; needed by consult-line to detect isearch
+         ("M-s L" . consult-line-multi)            ;; needed by consult-line to detect isearch
+         ;; Minibuffer history
+         :map minibuffer-local-map
+         ("M-s" . consult-history)                 ;; orig. next-matching-history-element
+         ("M-r" . consult-history))                ;; orig. previous-matching-history-element
+
+  ;; Enable automatic preview at point in the *Completions* buffer. This is
+  ;; relevant when you use the default completion UI.
+  :hook
+  (completion-list-mode . consult-preview-at-point-mode)
+
+  ;; Configure other variables and modes in the :config section,
+  ;; after lazily loading the package.
+  :config
+
+  ;; Optionally configure preview. The default value
+  ;; is 'any, such that any key triggers the preview.
+  ;; (setq consult-preview-key 'any)
+  ;; (setq consult-preview-key (kbd "M-."))
+  ;; (setq consult-preview-key (list (kbd "<S-down>") (kbd "<S-up>")))
+  ;; For some commands and buffer sources it is useful to configure the
+  ;; :preview-key on a per-command basis using the `consult-customize' macro.
+  (consult-customize
+   consult-theme :preview-key '(:debounce 0.2 any)
+   consult-ripgrep consult-git-grep consult-grep
+   consult-bookmark consult-recent-file consult-xref
+   consult--source-bookmark consult--source-file-register
+   consult--source-recent-file consult--source-project-recent-file
+   ;; :preview-key (kbd "M-.")
+   :preview-key '(:debounce 0.4 any))
+
+  ;; Optionally configure the narrowing key.
+  ;; Both < and C-+ work reasonably well.
+  (setq consult-narrow-key "<") ;; (kbd "C-+")
+
+  ;; Optionally make narrowing help available in the minibuffer.
+  ;; You may want to use `embark-prefix-help-command' or which-key instead.
+  ;; (define-key consult-narrow-map (vconcat consult-narrow-key "?") #'consult-narrow-help)
+)
+
+(use-package savehist
+  :init
+  (savehist-mode))
+
+(use-package orderless
+  :ensure t
+  :init
+  (setq completion-styles '(orderless basic)
+        completion-category-defaults nil
+        completion-category-overrides '((file (styles partial-completion)))))
+
+(use-package marginalia
+  :ensure t
   :bind
-  ("M-x" . helm-M-x)
-  ("C-x C-f" . helm-find-files)
+  ("M-A" . marginalia-cycle)
   :config
-  (helm-mode)
-  ; uncomment below for extra contrast
-  ; (set-face-attribute
-  ; 'helm-selection nil :background "blue" :foreground "white")
-  (use-package helm-ag
-    :init
-    (setq helm-ag-use-grep-ignore-list 1))
-  (use-package helm-system-packages)
-  (use-package helm-descbinds
-    :config (helm-descbinds-mode)))
-(use-package projectile
+  (marginalia-mode))
+
+(use-package embark
+  :ensure t
+  :bind (("C->" . embark-act)
+         ("C-;" . embark-dwim)
+         ("C-h B" . embark-bindings))
+  :init
+  (setq prefix-help-command #'embark-prefix-help-command)
   :config
-  (projectile-global-mode)
-  (setq projectile-completion-system 'helm)
-  (use-package helm-projectile
-    :config
-    (setq projectile-enable-caching nil)
-    (helm-projectile-on)))
+  (add-to-list 'display-buffer-alist
+               '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+                 nil
+                 (window-parameters (mode-line-format . none)))))
+
+(use-package embark-consult
+  :ensure t
+  :hook
+  (embark-collect-mode . consult-preview-at-point-mode))
 
 ;; Version control
 (use-package magit
@@ -83,15 +209,19 @@
   :config
   (define-key magit-mode-map "v"
     #'endless/visit-pull-request-url))
+
 (use-package git-gutter
+  :ensure t
   :hook (prog-mode . git-gutter-mode)
   :config
-  (setq git-gutter:update-interval 0.02) :ensure t)
+  (setq git-gutter:update-interval 0.02))
+
 (use-package git-gutter-fringe
   :config
   (define-fringe-bitmap 'git-gutter-fr:added [224] nil nil '(center repeated))
   (define-fringe-bitmap 'git-gutter-fr:modified [224] nil nil '(center repeated))
   (define-fringe-bitmap 'git-gutter-fr:deleted [128 192 224 240] nil nil 'bottom))
+
 (use-package git-timemachine)
 
 
@@ -103,9 +233,6 @@
   (global-tree-sitter-mode)
   (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
 
-;; Python stuff
-;; Recommend installing
-;; pip install pyls-black pyls-isort pyls-mypy
 (use-package eglot
   :ensure t
   :defer t
@@ -116,54 +243,51 @@
            (plugins
             (pycodestyle (enabled . nil)))))))
 
+(use-package direnv
+ :config
+ (direnv-mode))
 
+(use-package company
+  :ensure t
+  :defer t
+  :custom
+  (company-dabbrev-other-buffers t)
+  (company-dabbrev-code-other-buffers t)
+  (company-show-numbers t)
+  (company-minimum-prefix-length 2)
+  (company-dabbrev-downcase nil)
+  (company-dabbrev-ignore-case t)
+  (company-idle-delay 0.2)
+  (company-global-modes '(not eshell-mode shell-mode))
+  :hook
+  ((text-mode . company-mode)
+   (prog-mode . company-mode)))
+
+
+;; **** Python ****
+;;
+;; Recommend installing
+;; pip install pyls-black pyls-isort pyls-mypy
+;;
+;; For local Python saves add to .dir-locals.el
+;; ((python-mode
+;;  (eval python-isort-on-save-mode)
+;;  (eval blacken-mode)))
 (use-package python-isort
   :after python)
 
 (use-package blacken
   :after python)
 
-;; For local saves add to .dir-locals.el
-;; ((python-mode
-;;  (eval python-isort-on-save-mode)
-;;  (eval blacken-mode)))
-
-(use-package direnv
- :config
- (direnv-mode))
+;; ensure pip install importmagic epc
+;; may need to set variable `python-shell-interpreter' to include path
+(use-package importmagic
+    :ensure t
+    :config
+    (add-hook 'python-mode-hook 'importmagic-mode))
 
 
-
-
-
-;; Provide drop-down completion.
-(use-package company
-  :ensure t
-  :defer t
-  :custom
-  ;; Search other buffers with the same modes for completion instead of
-  ;; searching all other buffers.
-  (company-dabbrev-other-buffers t)
-  (company-dabbrev-code-other-buffers t)
-  ;; M-<num> to select an option according to its number.
-  (company-show-numbers t)
-  ;; Only 2 letters required for completion to activate.
-  (company-minimum-prefix-length 3)
-  ;; Do not downcase completions by default.
-  (company-dabbrev-downcase nil)
-  ;; Even if I write something with the wrong case,
-  ;; provide the correct casing.
-  (company-dabbrev-ignore-case t)
-  ;; company completion wait
-  (company-idle-delay 0.2)
-  ;; No company-mode in shell & eshell
-  (company-global-modes '(not eshell-mode shell-mode))
-  ;; Use company with text and programming modes.
-    :hook ((text-mode . company-mode)
-           (prog-mode . company-mode)))
-
-
-;; Other languages etc.
+;; **** Other languages etc. ****
 (use-package js2-mode
   :mode ("\\.js\\'" . js2-mode)
   :hook
@@ -171,7 +295,7 @@
   :config
   (setq js-indent-level 2))
   (lambda () (tern-mode t))
-(lambda () (flycheck-mode t))
+
 (use-package typescript-mode
   :mode ("\.tsx$"))
 (use-package web-mode
@@ -191,20 +315,22 @@
 ;; Misc
 (use-package editorconfig)
 
-;; Aesthetics
+;; **** Aesthetics ****
 (use-package minions
   :config (minions-mode 1))
-(use-package emojify)
+
 (use-package nyan-mode
+  :init
+  (setq nyan-bar-length 16)
   :config
   (nyan-mode t))
 (use-package beacon)
 
 (use-package nord-theme)
-(use-package atom-one-dark-theme)
-(load-theme 'atom-one-dark t)
 
-
+(use-package atom-one-dark-theme
+  :config
+  (load-theme 'atom-one-dark t))
 
 ;;; ***************************************************************************
 ;;; Filesystem
@@ -222,7 +348,7 @@
 ;;; Handy functions
 ;;;
 
-(defun open-config ()
+(defun find-config ()
   "Open the config file"
   (interactive)
   (find-file user-init-file))
@@ -246,7 +372,6 @@
   (let ((md5-value (md5 (buffer-substring-no-properties p1 p2))))
     (delete-region (region-beginning) (region-end))
     (insert md5-value)))
-
 
 (defun rotate-windows (arg)
   "Rotate your windows; use the prefix argument to rotate the other direction"
@@ -276,7 +401,6 @@
               rotate-times
               (if (< rotate-times 0) (1+ rotate-times) (1- rotate-times)))))))
 
-
 (defun close-brace-and-move-point ()
   (interactive)
   (insert "{")
@@ -286,7 +410,6 @@
   (previous-line)
   (end-of-line)
   (newline-and-indent))
-
 
 (defun close-bracket-and-move-point ()
   (interactive)
@@ -299,7 +422,6 @@
   (insert "\"")
   (insert "\"")
   (backward-char))
-
 
 (defun close-quotes-and-move-point ()
   (interactive)
@@ -376,13 +498,13 @@
 (setq git-commit-summary-max-length 72)
 (setq vc-follow-symlinks nil)
 (setq confirm-kill-processes nil)
-;; (desktop-save-mode 1)
-;; (setq desktop-load-locked-desktop t)
-;; (setq savehist-file (expand-file-name "savehist" user-emacs-directory))
-;; (savehist-mode 1)
-;; (setq savehist-save-minibuffer-history 1)
-;; (setq savehist-additional-variables
-;;       '(kill-ring search-ring regexp-search-ring))
+
+
+(global-set-key
+ (kbd "M-H")
+ (lambda ()
+   (interactive)
+   (if mark-active (backward-paragraph) (mark-paragraph))))
 
 ;; Scrolling
 (setq scroll-step 1)
@@ -425,7 +547,6 @@
 (setq highlight-tail-mode 1)
 (global-set-key (kbd "C-S-<mouse-1>") 'mc/add-cursor-on-click)
 
-; Confirm C-x C-c
 (add-hook 'kill-emacs-query-functions
           (lambda () (y-or-n-p "Really exit Emacs? "))
           'append)
@@ -472,25 +593,7 @@
 ;(setq lisp-indent-function 'common-lisp-indent-function)
 
 
-;; ***************************************************************************
-;; Python
-;;
-
-;; make sure following are pip installed:
-;; jedi importmagic autopep8 yapf
-;; (setq python-check-command "flake8")
-;; (highlight-indentation-mode -1)
-;; (setq python-shell-interpreter "ipython3"
-;;       python-shell-interpreter-args "-i --simple-prompt")
-
-;; (setq python-shell-completion-native nil)
-;; (setq python-shell-native-complete nil)
-;; (add-to-list 'python-shell-completion-native-disabled-interpreters "python3")
-
-
-
-
-
+;; SQL
 (setq sql-indent-level 2)
 
 
@@ -498,15 +601,15 @@
 ;; HTML and CSS
 ;;
 
-
 (add-to-list 'auto-mode-alist '("\\.scss\\'" . css-mode))
-
+(setq css-indent-offset 2)
 
 
 ;;; ***************************************************************************
 ;;; Keys
 ;;; (Keep at the bottom to avoid being clobbered by various modes)
 
+(global-set-key (kbd "C-x M-f") 'project-find-file)
 (global-set-key (kbd "C-x C-r") 'rename-current-buffer-file)
 
 ;; delete as delete instead of backspace
@@ -533,11 +636,6 @@
   "Kill up to, but not including ARGth occurrence of CHAR.")
 (global-set-key "\M-z" 'zap-up-to-char)
 
-(global-set-key (kbd "C-x M-f") 'helm-projectile)
-(global-set-key (kbd "C-x M-F") 'helm-projectile-find-file-in-known-projects)
-(global-set-key (kbd "s-s") 'helm-do-ag)
-(global-set-key (kbd "s-S") 'helm-do-ag-project-root)
-
 (global-set-key (kbd "s-<left>") #'previous-buffer)
 (global-set-key (kbd "s-<right>") #'next-buffer)
 
@@ -554,7 +652,5 @@
 (global-set-key (kbd "C-M-g") 'top-level)
 
 (global-set-key (kbd "C-z") 'repeat)
-
-(define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action)
 
 (setq tern-command '("tern" "--no-port-file"))
