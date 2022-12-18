@@ -64,7 +64,8 @@
   ;; Do not allow the cursor in the minibuffer prompt
   (setq minibuffer-prompt-properties
         '(read-only t cursor-intangible t face minibuffer-prompt))
-  (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode))
+  (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
+  (setq enable-recursive-minibuffers t))
 
 (use-package auto-package-update
   :config
@@ -127,32 +128,21 @@
          ("M-s L" . consult-line-multi)            ;; needed by consult-line to detect isearch
          ;; Minibuffer history
          :map minibuffer-local-map
+         ("C-l" . up-directory)
          ("M-s" . consult-history)                 ;; orig. next-matching-history-element
          ("M-r" . consult-history))                ;; orig. previous-matching-history-element
 
-  ;; Enable automatic preview at point in the *Completions* buffer. This is
-  ;; relevant when you use the default completion UI.
   :hook
   (completion-list-mode . consult-preview-at-point-mode)
 
-  ;; Configure other variables and modes in the :config section,
-  ;; after lazily loading the package.
   :config
-
-  ;; Optionally configure preview. The default value
-  ;; is 'any, such that any key triggers the preview.
-  ;; (setq consult-preview-key 'any)
-  ;; (setq consult-preview-key (kbd "M-."))
-  ;; (setq consult-preview-key (list (kbd "<S-down>") (kbd "<S-up>")))
-  ;; For some commands and buffer sources it is useful to configure the
-  ;; :preview-key on a per-command basis using the `consult-customize' macro.
   (consult-customize
    consult-theme :preview-key '(:debounce 0.2 any)
+   consult-multi-occur
    consult-ripgrep consult-git-grep consult-grep
    consult-bookmark consult-recent-file consult-xref
    consult--source-bookmark consult--source-file-register
    consult--source-recent-file consult--source-project-recent-file
-   ;; :preview-key (kbd "M-.")
    :preview-key '(:debounce 0.4 any))
 
   ;; Optionally configure the narrowing key.
@@ -161,8 +151,7 @@
 
   ;; Optionally make narrowing help available in the minibuffer.
   ;; You may want to use `embark-prefix-help-command' or which-key instead.
-  ;; (define-key consult-narrow-map (vconcat consult-narrow-key "?") #'consult-narrow-help)
-)
+  (define-key consult-narrow-map (vconcat consult-narrow-key "?") #'consult-narrow-help))
 
 (use-package savehist
   :init
@@ -237,6 +226,7 @@
   :ensure t
   :defer t
   :hook (python-mode . eglot-ensure)
+  :bind (("C-c r" . eglot-rename))
   :init
   (setq eglot-workspace-configuration
         '((pylsp
@@ -273,6 +263,10 @@
 ;; ((python-mode
 ;;  (eval python-isort-on-save-mode)
 ;;  (eval blacken-mode)))
+(use-package python
+  :init
+  (setq python-fill-docstring-style 'django))
+
 (use-package python-isort
   :after python)
 
@@ -282,9 +276,15 @@
 ;; ensure pip install importmagic epc
 ;; may need to set variable `python-shell-interpreter' to include path
 (use-package importmagic
-    :ensure t
-    :config
-    (add-hook 'python-mode-hook 'importmagic-mode))
+  :ensure t
+  :bind (("C-c i" . importmagic-fix-imports))
+  :init
+  ;; Set maximum allowed line size to be huge because importmagic's
+  ;; line breaking is buggy (black can take care of it)
+  (setq importmagic-style-configuration-alist
+        '((multiline . parentheses)
+          (max_columns . 1000)))
+  :hook (python-mode import-magic-mode))
 
 
 ;; **** Other languages etc. ****
@@ -429,19 +429,6 @@
   (insert "'")
   (backward-char))
 
-(defun goto-line-with-feedback (&optional line)
-  "Show line numbers temporarily, while prompting for the line number input"
-  (interactive "P")
-  (if line
-      (goto-line line)
-    (let ((initial-linum (if (bound-and-true-p linum-mode) t -1)))
-      (unwind-protect
-          (progn
-            (linum-mode 1)
-            (let ((line (read-number "Line: ")))
-              (goto-line line)))
-        (linum-mode initial-linum)))))
-
 (defun rename-current-buffer-file ()
   "Renames current buffer and file it is visiting."
   (interactive)
@@ -480,6 +467,33 @@
   (interactive)
   (scroll-down-line)
   (previous-line))
+
+(defun up-directory (path)
+  "Move up a directory in PATH without affecting the kill buffer."
+  (interactive "p")
+  (if (string-match-p "/." (minibuffer-contents))
+      (let ((end (point)))
+	    (re-search-backward "/.")
+	    (forward-char)
+	    (delete-region (point) end))))
+
+
+(defun get-buffers-matching-mode (mode)
+  "Returns a list of buffers where their major-mode is equal to MODE"
+  (let ((buffer-mode-matches '()))
+    (dolist (buf (buffer-list))
+      (with-current-buffer buf
+        (when (eq mode major-mode)
+          (push buf buffer-mode-matches))))
+    buffer-mode-matches))
+
+
+(defun multi-occur-in-this-mode ()
+  "Show all lines matching REGEXP in buffers with this major mode."
+  (interactive)
+  (consult-multi-occur
+   (get-buffers-matching-mode major-mode)
+   (car (occur-read-primary-args))))
 
 
 ;;; ***************************************************************************
@@ -550,6 +564,9 @@
 (add-hook 'kill-emacs-query-functions
           (lambda () (y-or-n-p "Really exit Emacs? "))
           'append)
+
+(define-key minibuffer-local-filename-completion-map
+            [C-l] #'up-directory)
 
 ; Use a hook so the message doesn't get clobbered by other messages.
 (add-hook 'emacs-startup-hook
@@ -639,12 +656,12 @@
 (global-set-key (kbd "s-<left>") #'previous-buffer)
 (global-set-key (kbd "s-<right>") #'next-buffer)
 
-(global-set-key [remap goto-line] 'goto-line-with-feedback)
-
 (global-set-key (kbd "C-'") 'close-quotes-and-move-point)
 (global-set-key (kbd "M-\"") 'close-double-quotes-and-move-point)
 (global-set-key (kbd "C-(") 'close-bracket-and-move-point)
 (global-set-key (kbd "C-{") 'close-brace-and-move-point)
+
+(global-set-key (kbd "M-<backspace>") 'backward-kill-sexp)
 
 (define-key global-map (kbd "C-x O") 'previous-multiframe-window)
 (global-set-key (kbd "C-x t") 'rotate-windows)
