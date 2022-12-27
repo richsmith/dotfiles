@@ -39,10 +39,9 @@
 (package-initialize)
 
 (unless (package-installed-p 'use-package)
- (package-refresh-contents)
- (package-install 'use-package))
+  (package-refresh-contents)
+  (package-install 'use-package))
 (setq use-package-always-ensure t)
-
 
 ;; Use straight for package management
 (defvar bootstrap-version)
@@ -186,6 +185,8 @@
 
 (use-package embark-consult
   :ensure t
+  :after (embark consult)
+  :demand t
   :hook
   (embark-collect-mode . consult-preview-at-point-mode))
 
