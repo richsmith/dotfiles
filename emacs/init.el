@@ -73,6 +73,8 @@
   (auto-package-update-maybe))
 
 (use-package vertico
+  :bind (:map vertico-map
+              ("C-j" . vertico-insert))
   :init
   (vertico-mode)
   (setq vertico-scroll-margin 5)
@@ -165,9 +167,11 @@
 
 (use-package marginalia
   :ensure t
+  :after vertico
   :bind
-  ("M-A" . marginalia-cycle)
-  :config
+  (:map minibuffer-local-map
+         ("M-A" . marginalia-cycle))
+  :init
   (marginalia-mode))
 
 (use-package embark
