@@ -1,20 +1,6 @@
 ;;; Rich Smith (rlsNO@SPAMhwyl.org)
-
-;;; ***************************************************************************
-;;; Windowing stuff (keep at top to turn off GUI items as soon as possible)
-;;;
-(setq inhibit-startup-message t)
-(setq initial-scratch-message nil)
-(tool-bar-mode -1)
-(scroll-bar-mode -1)
-;; set frame title to buffer/filename followed by (username@host)
-(add-hook 'window-configuration-change-hook
-      (lambda ()
-        (setq frame-title-format
-          (concat
-           "%b ("
-           user-login-name "@" system-name ")"))))
-
+(setq user-full-name "Rich Smith"
+      user-mail-address (concat "rls" "@" "hwyl.org"))
 
 ;;; ***************************************************************************
 ;;; Files
@@ -550,9 +536,8 @@
 ; stop at the end of the file, not just add lines
 (setq next-line-add-newlines nil)
 
-; turn off that BLOODY ANNOYING BEEP
-(defun do-not-ring-bloody-bell () nil)
-(setq ring-bell-function `do-not-ring-bloody-bell)
+; absolutely do NOT beep at me
+(setq ring-bell-function `ignore)
 
 ;; stop closing windows on repeated presses of escape
 (defadvice keyboard-escape-quit (around my-keyboard-escape-quit activate)
