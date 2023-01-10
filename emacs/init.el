@@ -224,25 +224,17 @@
            (plugins
             (pycodestyle (enabled . nil)))))))
 
+(use-package corfu
+  :custom
+  ((corfu-auto t)                 ;; Enable auto completion
+   (corfu-scroll-margin 5)        ;; Use scroll margin
+   (corfu-min-width 48))
+  :init
+  (global-corfu-mode))
+
 (use-package direnv
  :config
  (direnv-mode))
-
-(use-package company
-  :ensure t
-  :defer t
-  :custom
-  (company-dabbrev-other-buffers t)
-  (company-dabbrev-code-other-buffers t)
-  (company-show-numbers t)
-  (company-minimum-prefix-length 2)
-  (company-dabbrev-downcase nil)
-  (company-dabbrev-ignore-case t)
-  (company-idle-delay 0.2)
-  (company-global-modes '(not eshell-mode shell-mode))
-  :hook
-  ((text-mode . company-mode)
-   (prog-mode . company-mode)))
 
 
 ;; **** Python ****
