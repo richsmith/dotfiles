@@ -8,11 +8,12 @@
 
 ;; A place for emacs to update variables
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
-(load custom-file)
+(when (file-exists-p custom-file)
+  (load custom-file))
 ;; A file where machine-localised settings can be defined; load it if present
 (let ((local-file (expand-file-name "local.el" user-emacs-directory)))
-  (if (file-exists-p local-file)
-      (load local-file)))
+  (when (file-exists-p local-file)
+    (load local-file)))
 
 
 ;;; ***************************************************************************
