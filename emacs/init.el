@@ -274,6 +274,8 @@
   (setq importmagic-style-configuration-alist
         '((multiline . parentheses)
           (max_columns . 1000)))
+  (setq importmagic-python-interpreter
+        (executable-find "python3"))
   :hook (python-mode import-magic-mode))
 
 
@@ -342,6 +344,11 @@
   "Open the config file"
   (interactive)
   (find-file user-init-file))
+
+(defun find-custom ()
+  "Open the custom file"
+  (interactive)
+  (find-file custom-file))
 
 (defun pretty-print-xml-region (begin end)
   (interactive "r")
