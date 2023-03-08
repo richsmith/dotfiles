@@ -2,6 +2,8 @@
 (setq user-full-name "Rich Smith"
       user-mail-address (concat "rls" "@" "hwyl.org"))
 
+(split-window-horizontally)
+
 ;;; ***************************************************************************
 ;;; Files
 ;;;
@@ -52,6 +54,21 @@
         '(read-only t cursor-intangible t face minibuffer-prompt))
   (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
   (setq enable-recursive-minibuffers t))
+
+
+
+
+(use-package frame-fns
+  :straight (frame-fns :type git :host github :repo "emacsmirror/frame-fns")
+  )
+(use-package frame-cmds
+  :straight (frame-cmds :type git :host github :repo "emacsmirror/frame-cmds")
+  :bind (("M-<up>" . move-frame-up)
+         ("M-<down>" . move-frame-down)
+         ("M-<left>" . move-frame-left)
+         ("M-<right>" . move-frame-right))
+  )
+
 
 (use-package auto-package-update
   :config
