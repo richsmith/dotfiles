@@ -1,6 +1,47 @@
 (setq user-full-name "Rich Smith"
       user-mail-address (concat "rls" "@" "hwyl.org"))
 
+
+;;; ***************************************************************************
+;;; Window display
+;;;
+
+(defconst laptop-screen-width 1920)
+(defvar machine-type nil)
+
+(defun get-primary-monitor-width ()
+  "Get the width of the primary monitor in pixels."
+  (let* ((primary-monitor (car (display-monitor-attributes-list)))
+         (geometry (cdr (assoc 'geometry primary-monitor)))
+         (width (nth 2 geometry)))
+    width))
+
+(defun get-machine-type ()
+  (let ((width (get-primary-monitor-width)))
+    (if (<= width laptop-screen-width)
+        'laptop
+      'desktop)))
+
+(setq machine-type (get-machine-type))
+
+(if (eq machine-type 'desktop)
+    (setq-default default-frame-alist
+       '((height . 55)
+         (width . 174)
+         (left . 613)
+         (top . 100)
+         (vertical-scroll-bars . nil)
+         (horizontal-scroll-bars . nil)
+         (tool-bar-lines . 0))))
+  (setq-default default-frame-alist
+       '((height . 55)
+         (width . 174)
+         (left . 613)
+         (top . 100)
+         (vertical-scroll-bars . nil)
+         (horizontal-scroll-bars . nil)
+         (tool-bar-lines . 0)))
+
 (split-window-horizontally)
 
 ;;; ***************************************************************************
