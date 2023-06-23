@@ -1,4 +1,3 @@
-;;; Rich Smith (rlsNO@SPAMhwyl.org)
 (setq user-full-name "Rich Smith"
       user-mail-address (concat "rls" "@" "hwyl.org"))
 
@@ -24,7 +23,10 @@
 
 ;; **** Setup ****
 (require 'package)
-(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
+(setq package-archives
+      '(("gnu" . "https://elpa.gnu.org/packages/")
+        ("melpa" . "https://melpa.org/packages/")))
+
 (package-initialize)
 
 (unless (package-installed-p 'use-package)
@@ -56,8 +58,6 @@
   (setq enable-recursive-minibuffers t))
 
 
-
-
 (use-package frame-fns
   :straight (frame-fns :type git :host github :repo "emacsmirror/frame-fns")
   )
@@ -68,13 +68,6 @@
          ("M-<left>" . move-frame-left)
          ("M-<right>" . move-frame-right))
   )
-
-
-(use-package auto-package-update
-  :config
-  (setq auto-package-update-delete-old-versions t)
-  (setq auto-package-update-hide-results t)
-  (auto-package-update-maybe))
 
 (use-package vertico
   :bind (:map vertico-map
@@ -97,18 +90,18 @@
          ("C-x p b" . consult-project-buffer)
          ;; Custom M-# bindings for fast register access
          ("M-#" . consult-register-load)
-         ("M-'" . consult-register-store)          ;; orig. abbrev-prefix-mark (unrelated)
+         ("M-'" . consult-register-store)
          ("C-M-#" . consult-register)
          ;; Other custom bindings
-         ("M-y" . consult-yank-pop)                ;; orig. yank-pop
+         ("M-y" . consult-yank-pop)
          ;; M-g bindings (goto-map)
          ("M-g e" . consult-compile-error)
-         ("M-g f" . consult-flymake)               ;; Alternative: consult-flycheck
-         ("M-g g" . consult-goto-line)             ;; orig. goto-line
-         ("M-g M-g" . consult-goto-line)           ;; orig. goto-line
-         ("M-g l" . consult-goto-line)             ;; orig. goto-line
-         ("M-g M-l" . consult-goto-line)           ;; orig. goto-line
-         ("M-g o" . consult-outline)               ;; Alternative: consult-org-heading
+         ("M-g f" . consult-flymake)
+         ("M-g g" . consult-goto-line)
+         ("M-g M-g" . consult-goto-line)
+         ("M-g l" . consult-goto-line)
+         ("M-g M-l" . consult-goto-line)
+         ("M-g o" . consult-outline)
          ("M-g m" . consult-mark)
          ("M-g k" . consult-global-mark)
          ("M-g i" . consult-imenu)
@@ -127,15 +120,15 @@
          ;; Isearch integration
          ("M-s e" . consult-isearch-history)
          :map isearch-mode-map
-         ("M-e" . consult-isearch-history)         ;; orig. isearch-edit-string
-         ("M-s e" . consult-isearch-history)       ;; orig. isearch-edit-string
-         ("M-s l" . consult-line)                  ;; needed by consult-line to detect isearch
-         ("M-s L" . consult-line-multi)            ;; needed by consult-line to detect isearch
+         ("M-e" . consult-isearch-history)
+         ("M-s e" . consult-isearch-history)
+         ("M-s l" . consult-line)
+         ("M-s L" . consult-line-multi)
          ;; Minibuffer history
          :map minibuffer-local-map
          ("C-l" . up-directory)
-         ("M-s" . consult-history)                 ;; orig. next-matching-history-element
-         ("M-r" . consult-history))                ;; orig. previous-matching-history-element
+         ("M-s" . consult-history)
+         ("M-r" . consult-history))
 
   :hook
   (completion-list-mode . consult-preview-at-point-mode)
@@ -203,7 +196,11 @@
   :init
   (setq magit-save-repository-buffers nil)
   :bind
-  ("C-S-m" . magit-status)
+  (("C-S-m" . magit-status)
+   ; below 3 recommended by Magit
+   ("C-x g" . magit-status)
+   ("C-c g" . magit-dispatch)
+   ("C-c f" . magit-file-dispatch))
   :config
   (define-key magit-mode-map "v"
     #'endless/visit-pull-request-url))
@@ -223,30 +220,27 @@
 (use-package git-timemachine)
 
 
-(use-package tree-sitter-langs :ensure t)
-(use-package tree-sitter
-  :ensure t
-  :after tree-sitter-langs
-  :config
-  (global-tree-sitter-mode)
-  (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
-
+;; LSP
 (use-package eglot
   :ensure t
   :defer t
   :hook (python-mode . eglot-ensure)
-  :bind (("C-c r" . eglot-rename))
+  :bind (("C-c r" . eglot-rename)
+         ("C-c C-r" . eglot-rename))
   :init
   (setq eglot-workspace-configuration
-        '((pylsp
-           (plugins
-            (pycodestyle (enabled . nil)))))))
+      '((python-mode
+         (pylsp
+          :configuration-sources ["flake8"]
+          :plugins ((pycodestyle :enabled nil)
+                    (pyflakes :enabled nil)))))))
 
 (use-package corfu
   :custom
   ((corfu-auto t)                 ;; Enable auto completion
    (corfu-scroll-margin 5)        ;; Use scroll margin
-   (corfu-min-width 48))
+   (corfu-min-width 48)
+   (corfu-separator ?\s))
   :init
   (global-corfu-mode))
 
@@ -254,11 +248,29 @@
  :config
  (direnv-mode))
 
-(use-package yasnippet
-  :hook (prog-mode . yas-minor-mode))
 
-(use-package yasnippet-snippets
-  :after yasnippet)
+(use-package copilot
+  :straight (:host github :repo "zerolfx/copilot.el" :files ("dist" "*.el"))
+  :ensure t
+  :hook (prog-mode . copilot-mode)
+  :bind (("C-c M-f" . copilot-complete)
+         :map copilot-completion-map
+         ("C-g" . 'copilot-clear-overlay)
+         ("M-P" . 'copilot-previous-completion)
+         ("M-N" . 'copilot-next-completion)
+         ("<tab>" . 'copilot-accept-completion)
+         ("M-f" . 'copilot-accept-completion-by-word)
+         ("M-e" . copilot-accept-completion-by-line)
+         ("M-n" . copilot-accept-completion-by-line))
+  :custom-face (copilot-overlay-face ((t :foreground "silver" :underline t)))
+  :config
+  (setq copilot-log-max 10000)
+  (setq copilot-node-executable
+        (executable-find "node")))
+
+(defun clear-copilot-overlay ()
+  (interactive)
+  (copilot-clear-overlay))
 
 
 ;; **** Python ****
@@ -280,8 +292,8 @@
 (use-package blacken
   :after python)
 
+
 ;; ensure pip install importmagic epc
-;; may need to set variable `python-shell-interpreter' to include path
 (use-package importmagic
   :ensure t
   :bind (("C-c i" . importmagic-fix-imports))
@@ -303,7 +315,6 @@
   (js2-mode . ac-js2-mode)
   :config
   (setq js-indent-level 2))
-  (lambda () (tern-mode t))
 
 (use-package typescript-mode
   :mode ("\.tsx$"))
@@ -487,9 +498,9 @@
   (interactive "p")
   (if (string-match-p "/." (minibuffer-contents))
       (let ((end (point)))
-	    (re-search-backward "/.")
-	    (forward-char)
-	    (delete-region (point) end))))
+   (re-search-backward "/.")
+   (forward-char)
+   (delete-region (point) end))))
 
 
 (defun get-buffers-matching-mode (mode)
@@ -528,23 +539,22 @@
 (setq confirm-kill-processes nil)
 
 
-(global-set-key
- (kbd "M-H")
- (lambda ()
-   (interactive)
-   (if mark-active (backward-paragraph) (mark-paragraph))))
+(keymap-global-set "M-H"
+                   (lambda ()
+                     (interactive)
+                     (if mark-active (backward-paragraph) (mark-paragraph))))
 
 ;; Scrolling
 (setq scroll-step 1)
 (setq scroll-conservatively 100000)
 (setq scroll-margin 10)
 (setq linum-delay t)
-(global-set-key (kbd "M-p") 'scroll-down-preserve-location)
-(global-set-key (kbd "M-n") 'scroll-up-preserve-location)
+(keymap-global-set "M-p" 'scroll-down-preserve-location)
+(keymap-global-set "M-n" 'scroll-up-preserve-location)
 (global-set-key (kbd "C-M-p") (kbd "C-u 8 C-p"))
 (global-set-key (kbd "C-M-n") (kbd "C-u 8 C-n"))
-(global-set-key (kbd "C-S-p") 'backward-sexp)
-(global-set-key (kbd "C-S-n") 'forward-sexp)
+(keymap-global-set "C-S-p" 'backward-sexp)
+(keymap-global-set "C-S-n" 'forward-sexp)
 
 
 ;; Display
@@ -572,7 +582,7 @@
       (fset 'one-window-p (symbol-function 'orig-one-window-p)))))
 
 (setq highlight-tail-mode 1)
-(global-set-key (kbd "C-S-<mouse-1>") 'mc/add-cursor-on-click)
+(keymap-global-set "C-S-<mouse-1>" 'mc/add-cursor-on-click)
 
 (add-hook 'kill-emacs-query-functions
           (lambda () (y-or-n-p "Really exit Emacs? "))
@@ -639,48 +649,62 @@
 ;;; Keys
 ;;; (Keep at the bottom to avoid being clobbered by various modes)
 
-(global-set-key (kbd "C-x M-f") 'project-find-file)
-(global-set-key (kbd "C-x C-r") 'rename-current-buffer-file)
+(keymap-global-set "C-x M-f" 'project-find-file)
+(keymap-global-set "C-x M-F" 'project-switch-project)
+(keymap-global-set "C-x C-r" 'rename-current-buffer-file)
 
 ;; delete as delete instead of backspace
-(global-set-key [delete] 'delete-char)
-(global-set-key [kp-delete] 'delete-char)
+(keymap-global-set "<del>" 'delete-char)
+(keymap-global-set "<kp-del>" 'delete-char)
 
 ;; Shortcut keys
-(global-set-key "\M-\+" 'comment-region)
-(global-set-key "\M-\-" 'uncomment-region)
-(global-set-key "\M-\_" 'uncomment-region)
-(global-set-key "\C-x\M-o" 'other-frame)
-(global-set-key [f12] 'visual-line-mode)
-(global-set-key (kbd "<C-tab>") 'whitespace-mode)
+(keymap-global-set "M-+" 'comment-region)
+(keymap-global-set "M-\-" 'uncomment-region)
+(keymap-global-set "M-_" 'uncomment-region)
+(keymap-global-set "C-x M-o" 'other-frame)
+(keymap-global-set "<f12>" 'visual-line-mode)
+(keymap-global-set "C-<tab>" 'whitespace-mode)
 
-;(global-set-key "\M-p" 'backward-paragraph)
-;(global-set-key "\M-n" 'forward-paragraph)
-
-(global-set-key (kbd "C-S-j")
-                (lambda ()
-                  (interactive)
-                  (join-line -1)))
+(keymap-global-set "C-S-j"
+                   (lambda ()
+                     (interactive)
+                     (join-line -1)))
 
 (autoload 'zap-up-to-char "misc"
   "Kill up to, but not including ARGth occurrence of CHAR.")
-(global-set-key "\M-z" 'zap-up-to-char)
+(keymap-global-set "M-z" 'zap-up-to-char)
 
-(global-set-key (kbd "s-<left>") #'previous-buffer)
-(global-set-key (kbd "s-<right>") #'next-buffer)
+(keymap-global-set "s-<left>" #'previous-buffer)
+(keymap-global-set "s-<right>" #'next-buffer)
 
-(global-set-key (kbd "C-'") 'close-quotes-and-move-point)
-(global-set-key (kbd "M-\"") 'close-double-quotes-and-move-point)
-(global-set-key (kbd "C-(") 'close-bracket-and-move-point)
-(global-set-key (kbd "C-{") 'close-brace-and-move-point)
+(keymap-global-set "C-'" 'close-quotes-and-move-point)
+(keymap-global-set "M-\"" 'close-double-quotes-and-move-point)
 
-(global-set-key (kbd "M-<backspace>") 'backward-kill-sexp)
+(keymap-global-set "C-(" 'close-bracket-and-move-point)
+(keymap-global-set "C-{" 'close-brace-and-move-point)
 
-(define-key global-map (kbd "C-x O") 'previous-multiframe-window)
-(global-set-key (kbd "C-x t") 'rotate-windows)
+(keymap-global-set "M-<backspace>" 'backward-kill-sexp)
 
-(global-set-key (kbd "C-M-g") 'top-level)
+(keymap-global-set "C-x O" 'previous-multiframe-window)
+(keymap-global-set "C-x t" 'rotate-windows)
 
-(global-set-key (kbd "C-z") 'repeat)
+(keymap-global-set "C-M-g" 'top-level)
+
+(keymap-global-set "C-z" 'repeat)
+
+(keymap-global-set "C-c e p" 'flymake-goto-previous-error)
+(keymap-global-set "C-c e n" 'flymake-goto-next-error)
 
 (setq tern-command '("tern" "--no-port-file"))
+
+
+(defun display-copilot-overlay-visible ()
+  (interactive)
+  (let ((vis (copilot--overlay-visible)))
+        (if vis
+                (message "Copilot overlay is visible")
+          (message "Copilot overlay is not visible"))))
+
+(global-set-key (kbd "C-!") 'display-copilot-overlay-visible)
+
+;(setq-default mode-line-buffer-identification "hello")
