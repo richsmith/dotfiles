@@ -1,6 +1,8 @@
 (setq user-full-name "Rich Smith"
       user-mail-address (concat "rls" "@" "hwyl.org"))
 
+(defvar native-comp-deferred-compilation-deny-list nil)
+
 
 ;;; ***************************************************************************
 ;;; Window display
@@ -26,8 +28,8 @@
 
 (if (eq machine-type 'desktop)
     (setq-default default-frame-alist
-       '((height . 55)
-         (width . 174)
+       '((height . 60)
+         (width . 176)
          (left . 613)
          (top . 100)
          (vertical-scroll-bars . nil)
@@ -35,7 +37,7 @@
          (tool-bar-lines . 0))))
   (setq-default default-frame-alist
        '((height . 55)
-         (width . 174)
+         (width . 176)
          (left . 613)
          (top . 100)
          (vertical-scroll-bars . nil)
@@ -92,11 +94,11 @@
 ;; **** Core stuff ****
 (use-package emacs
   :init
+  ;; (setq enable-recursive-minibuffers t)
   ;; Do not allow the cursor in the minibuffer prompt
   (setq minibuffer-prompt-properties
         '(read-only t cursor-intangible t face minibuffer-prompt))
-  (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
-  (setq enable-recursive-minibuffers t))
+  (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode))
 
 
 (use-package frame-fns
@@ -154,7 +156,8 @@
          ("M-s G" . consult-git-grep)
          ("M-s r" . consult-ripgrep)
          ("M-s l" . consult-line)
-         ("M-s L" . consult-line-multi)
+         ("M-s L" . consult-line-multi) ; }
+         ("M-s b" . consult-line-multi) ; } AKA search project buffers
          ("M-s m" . consult-multi-occur)
          ("M-s k" . consult-keep-lines)
          ("M-s u" . consult-focus-lines)
@@ -241,10 +244,23 @@
    ; below 3 recommended by Magit
    ("C-x g" . magit-status)
    ("C-c g" . magit-dispatch)
-   ("C-c f" . magit-file-dispatch))
+   ("C-c f" . magit-file-dispatch)
+   :map magit-mode-map
+   ("v". visit-pull-request-url))
   :config
-  (define-key magit-mode-map "v"
-    #'endless/visit-pull-request-url))
+  (defun visit-pull-request-url ()
+    "Visit the current branch's PR on Github."
+    (interactive)
+    (browse-url
+     (format "https://github.com/%s/pull/new/%s"
+             (replace-regexp-in-string
+              "\\`.+github\\.com:\\(.+\\)\\.git\\'" "\\1"
+              (magit-get "remote"
+                         (magit-get-push-remote)
+                         "url"))
+             (magit-get-current-branch)))))
+
+  
 
 (use-package git-gutter
   :ensure t
@@ -267,23 +283,20 @@
   :defer t
   :hook (python-mode . eglot-ensure)
   :bind (("C-c r" . eglot-rename)
-         ("C-c C-r" . eglot-rename))
-  :init
-  (setq eglot-workspace-configuration
-      '((python-mode
-         (pylsp
-          :configuration-sources ["flake8"]
-          :plugins ((pycodestyle :enabled nil)
-                    (pyflakes :enabled nil)))))))
+         ("C-c C-r" . eglot-rename)))
 
-(use-package corfu
-  :custom
-  ((corfu-auto t)                 ;; Enable auto completion
-   (corfu-scroll-margin 5)        ;; Use scroll margin
-   (corfu-min-width 48)
-   (corfu-separator ?\s))
-  :init
-  (global-corfu-mode))
+;; Currently disabled due to issues with eglot
+;; See https://github.com/joaotavora/eglot/discussions/1127
+;; (use-package corfu
+;;   :custom
+;;   ((corfu-auto t)                 ;; Enable auto completion
+;;    (corfu-scroll-margin 5)        ;; Use scroll margin
+;;    (corfu-min-width 48)
+;;    (corfu-separator ?\s))
+;;   :bind ((:map corfu-map
+;;                ("<enter>" . nil)))
+;;   :init
+;;   (global-corfu-mode))
 
 (use-package direnv
  :config
@@ -330,23 +343,10 @@
 (use-package python-isort
   :after python)
 
-(use-package blacken
-  :after python)
-
-
-;; ensure pip install importmagic epc
-(use-package importmagic
-  :ensure t
-  :bind (("C-c i" . importmagic-fix-imports))
-  :init
-  ;; Set maximum allowed line size to be huge because importmagic's
-  ;; line breaking is buggy (black can take care of it)
-  (setq importmagic-style-configuration-alist
-        '((multiline . parentheses)
-          (max_columns . 1000)))
-  (setq importmagic-python-interpreter
-        (executable-find "python3"))
-  :hook (python-mode import-magic-mode))
+(use-package python-black
+  :demand t
+  :after python
+  :hook (python-mode . python-black-on-save-mode-enable-dwim))
 
 
 ;; **** Other languages etc. ****
@@ -736,16 +736,8 @@
 (keymap-global-set "C-c e p" 'flymake-goto-previous-error)
 (keymap-global-set "C-c e n" 'flymake-goto-next-error)
 
+;; Disable key chord for set-goal-column, but skip warning
+(put 'set-goal-column 'disabled nil)
+(keymap-global-set "C-x C-n" nil)
+
 (setq tern-command '("tern" "--no-port-file"))
-
-
-(defun display-copilot-overlay-visible ()
-  (interactive)
-  (let ((vis (copilot--overlay-visible)))
-        (if vis
-                (message "Copilot overlay is visible")
-          (message "Copilot overlay is not visible"))))
-
-(global-set-key (kbd "C-!") 'display-copilot-overlay-visible)
-
-;(setq-default mode-line-buffer-identification "hello")

@@ -1,3 +1,9 @@
+;; Separate elpa dir for each Emacs version
+(setq package-user-dir (locate-user-emacs-file
+                        (concat
+                         (file-name-as-directory "elpa")
+                         emacs-version)))
+
 ;; Turn off unneeded window stuff
 (setq inhibit-startup-message t)
 (setq initial-scratch-message nil)
