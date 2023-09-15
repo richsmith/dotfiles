@@ -307,7 +307,7 @@
   :straight (:host github :repo "zerolfx/copilot.el" :files ("dist" "*.el"))
   :ensure t
   :hook (prog-mode . copilot-mode)
-  :bind (("C-c M-f" . copilot-complete)
+  :bind (("C-c M-f" . copilot-accept-completion)
          :map copilot-completion-map
          ("C-g" . 'copilot-clear-overlay)
          ("M-P" . 'copilot-previous-completion)
@@ -352,6 +352,7 @@
   (setq python-fill-docstring-style 'django))
 
 (use-package python-isort
+  :ensure t
   :after python)
 
 (use-package python-black
@@ -371,18 +372,26 @@
 (use-package typescript-mode
   :mode ("\.tsx$"))
 (use-package web-mode
+  :ensure t
   :mode ("\\.ejs\\'" . web-mode)
   :config
   (setq web-mode-markup-indent-offset 4)
   (setq web-mode-css-indent-offset 4)
   (setq web-mode-code-indent-offset 4)
   (setq web-mode-indent-style 4))
-(use-package json-mode)
-(use-package terraform-mode)
+(use-package json-mode
+  :ensure t)
+(use-package terraform-mode
+  :ensure t)
 (use-package markdown-mode
+  :ensure t
   :mode ("\\.md\\'" . markdown-mode))
-(use-package yaml-mode)
-(use-package dotenv-mode)
+(use-package yaml-mode
+  :ensure t)
+(use-package dotenv-mode
+  :ensure t)
+(use-package dockerfile-mode
+  :ensure t)
 
 ;; Misc
 (use-package editorconfig)
