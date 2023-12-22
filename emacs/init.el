@@ -120,6 +120,15 @@
   (setq vertico-scroll-margin 5)
   (setq vertico-count 25))
 
+(use-package projectile
+  :ensure t
+  :init
+  (projectile-mode +1)
+  :bind (("C-x M-F" . projectile-find-file-in-known-projects)
+         :map projectile-mode-map
+         ("s-p" . projectile-command-map)
+         ("C-c p" . projectile-command-map)))
+
 (use-package consult
   :bind (("C-c h" . consult-history)
          ("C-c m" . consult-mode-command)
