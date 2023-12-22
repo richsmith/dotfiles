@@ -737,7 +737,6 @@
 ;;; (Keep at the bottom to avoid being clobbered by various modes)
 
 (keymap-global-set "C-x M-f" 'project-find-file)
-(keymap-global-set "C-x M-F" 'project-switch-project)
 (keymap-global-set "C-x C-r" 'rename-current-buffer-file)
 
 ;; delete as delete instead of backspace
