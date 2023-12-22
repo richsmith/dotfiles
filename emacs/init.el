@@ -412,15 +412,18 @@
   (setq js-indent-level 2))
 
 (use-package typescript-mode
-  :mode ("\.tsx$"))
+  :mode ("\\.htm?\\|\\.tsx$"))
 (use-package web-mode
   :ensure t
-  :mode ("\\.ejs\\'" . web-mode)
+  :mode (("\\.html?\\'" . web-mode)
+         ("\\.ejs\\'" . web-mode))
   :config
-  (setq web-mode-markup-indent-offset 4)
-  (setq web-mode-css-indent-offset 4)
-  (setq web-mode-code-indent-offset 4)
-  (setq web-mode-indent-style 4))
+  (setq web-mode-enable-current-element-highlight t)
+  (setq web-mode-enable-current-column-highlight t)
+  (setq web-mode-markup-indent-offset 2)
+  (setq web-mode-css-indent-offset 2)
+  (setq web-mode-code-indent-offset 2)
+  (setq web-mode-indent-style 2))
 (use-package json-mode
   :ensure t)
 (use-package terraform-mode
