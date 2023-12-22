@@ -332,7 +332,7 @@
   :straight (:host github :repo "zerolfx/copilot.el" :files ("dist" "*.el"))
   :ensure t
   :hook (prog-mode . copilot-mode)
-  :bind (("C-c M-f" . copilot-accept-completion)
+  :bind (("C-c M-f" . copilot-accept-completion-by-word)
          ("C-c <tab>" . copilot-accept-completion)
          :map copilot-completion-map
          ("C-g" . 'copilot-clear-overlay)
