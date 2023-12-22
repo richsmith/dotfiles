@@ -12,10 +12,10 @@ HIST_STAMPS="yyyy-mm-dd"
 plugins=(
     kubectl
     git
-    emacs
     dirhistory
     pip
     web-search
+    fzf
 )
 
 # Would you like to use another custom folder than $ZSH/custom?
