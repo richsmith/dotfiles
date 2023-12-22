@@ -91,8 +91,23 @@
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
 
+
 ;; **** Core stuff ****
 (use-package emacs
+  :bind (
+         ("<del>" . delete-char)
+         ("M-<backspace>" . backward-kill-sexp)
+         ("C-x C-r" . rename-current-buffer-file)
+         ("C-x M-o" . other-frame)
+         ("C-x 0" . previous-multiframe-window)
+         ("C-x t" . rotate-windows)
+         ("C-M-g" . top-level)
+         ("C-z" . repeat)
+         ("M-+" . comment-region)
+         ("M-\-" . uncomment-region)
+         ("M-_" . uncomment-region)
+         ("<f12>" . visual-line-mode)
+         ("C-<tab>" . whitespace-mode))
   :init
   ;; (setq enable-recursive-minibuffers t)
   ;; Do not allow the cursor in the minibuffer prompt
@@ -419,7 +434,6 @@
 (use-package dockerfile-mode
   :ensure t)
 
-;; Misc
 (use-package editorconfig)
 
 ;; **** Aesthetics ****
@@ -737,19 +751,7 @@
 ;;; (Keep at the bottom to avoid being clobbered by various modes)
 
 (keymap-global-set "C-x M-f" 'project-find-file)
-(keymap-global-set "C-x C-r" 'rename-current-buffer-file)
 
-;; delete as delete instead of backspace
-(keymap-global-set "<del>" 'delete-char)
-(keymap-global-set "<kp-del>" 'delete-char)
-
-;; Shortcut keys
-(keymap-global-set "M-+" 'comment-region)
-(keymap-global-set "M-\-" 'uncomment-region)
-(keymap-global-set "M-_" 'uncomment-region)
-(keymap-global-set "C-x M-o" 'other-frame)
-(keymap-global-set "<f12>" 'visual-line-mode)
-(keymap-global-set "C-<tab>" 'whitespace-mode)
 
 (keymap-global-set "C-S-j"
                    (lambda ()
@@ -760,23 +762,11 @@
   "Kill up to, but not including ARGth occurrence of CHAR.")
 (keymap-global-set "M-z" 'zap-up-to-char)
 
-(keymap-global-set "s-<left>" #'previous-buffer)
-(keymap-global-set "s-<right>" #'next-buffer)
-
 (keymap-global-set "C-'" 'close-quotes-and-move-point)
 (keymap-global-set "M-\"" 'close-double-quotes-and-move-point)
 
 (keymap-global-set "C-(" 'close-bracket-and-move-point)
 (keymap-global-set "C-{" 'close-brace-and-move-point)
-
-(keymap-global-set "M-<backspace>" 'backward-kill-sexp)
-
-(keymap-global-set "C-x O" 'previous-multiframe-window)
-(keymap-global-set "C-x t" 'rotate-windows)
-
-(keymap-global-set "C-M-g" 'top-level)
-
-(keymap-global-set "C-z" 'repeat)
 
 (keymap-global-set "C-c e p" 'flymake-goto-previous-error)
 (keymap-global-set "C-c e n" 'flymake-goto-next-error)
