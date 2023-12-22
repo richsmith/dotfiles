@@ -604,7 +604,6 @@
    (forward-char)
    (delete-region (point) end))))
 
-
 (defun get-buffers-matching-mode (mode)
   "Returns a list of buffers where their major-mode is equal to MODE"
   (let ((buffer-mode-matches '()))
@@ -614,7 +613,6 @@
           (push buf buffer-mode-matches))))
     buffer-mode-matches))
 
-
 (defun multi-occur-in-this-mode ()
   "Show all lines matching REGEXP in buffers with this major mode."
   (interactive)
@@ -622,6 +620,13 @@
    (get-buffers-matching-mode major-mode)
    (car (occur-read-primary-args))))
 
+(defun toggle-recursive-minibuffers ()
+  "Toggle recursive minibuffers"
+  (interactive)
+  (setq enable-recursive-minibuffers (not enable-recursive-minibuffers))
+  (message "recursive minibuffers is now %s"
+           (if enable-recursive-minibuffers "enabled" "disabled")))
+  
 
 ;;; ***************************************************************************
 ;;; Miscellaneous
