@@ -94,8 +94,7 @@
 
 ;; **** Core stuff ****
 (use-package emacs
-  :bind (
-         ("<del>" . delete-char)
+  :bind (("<del>" . delete-char)
          ("M-<backspace>" . backward-kill-sexp)
          ("C-x C-r" . rename-current-buffer-file)
          ("C-x M-o" . other-frame)
@@ -185,6 +184,8 @@
          ("M-s m" . consult-multi-occur)
          ("M-s k" . consult-keep-lines)
          ("M-s u" . consult-focus-lines)
+         ("M-s w" . consult-yank-from-kill-ring)
+         ("M-s y" . consult-yank-from-kill-ring)
          ;; Isearch integration
          ("M-s e" . consult-isearch-history)
          :map isearch-mode-map
