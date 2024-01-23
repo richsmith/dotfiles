@@ -1,8 +1,13 @@
-# we don't want anything history-related in VC
-*_history
+# Ignore everything by default
+*
 
-# ignore everything under emacs but the actual config files
-emacs/**
-!emacs/*.el
-emacs/local.el
-emacs/custom.el
+# Except what we decide to check in!
+
+!Readme.md
+!Makefile
+
+!emacs/
+!emacs/.config/
+!emacs/.config/emacs/
+!emacs/.config/emacs/early-init.el
+!emacs/.config/emacs/init.el
