@@ -6,11 +6,17 @@
 !Readme.md
 !Makefile
 
-!zsh/
-!zsh/.zshrc
-
 !emacs/
 !emacs/.config/
 !emacs/.config/emacs/
 !emacs/.config/emacs/early-init.el
 !emacs/.config/emacs/init.el
+
+!terminator/
+!terminator/**
+
+!zsh/
+!zsh/.zshrc
+
+!packages/
+!packages/**
