@@ -6,6 +6,9 @@
 !Readme.md
 !Makefile
 
+!zsh/
+!zsh/.zshrc
+
 !emacs/
 !emacs/.config/
 !emacs/.config/emacs/
