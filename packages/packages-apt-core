@@ -2,5 +2,6 @@ emacs
 fzf
 git
 ripgrep
+stow
 terminator
 zsh
