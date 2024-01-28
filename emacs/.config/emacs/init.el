@@ -260,6 +260,19 @@
   :hook
   (embark-collect-mode . consult-preview-at-point-mode))
 
+
+
+(use-package org
+  :hook (org-mode . visual-line-mode)
+  :bind (("C-c a" . org-agenda)
+         ("C-c c" . org-capture))
+  :config
+  (setq org-directory "~/org")
+  (setq org-agenda-files
+        (mapcar (lambda (path) (concat org-directory path))
+                '("/agenda/todo.org"))))
+
+
 ;; Version control
 (use-package magit
   :init
