@@ -392,6 +392,10 @@
   (global-tree-sitter-mode)
   (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
 
+(use-package flymake
+  :bind
+  (("C-c e p" . flymake-goto-previous-error)
+   ("C-c e n" . flymake-goto-next-error)))
 
 ;; **** Python ****
 ;;
@@ -789,9 +793,6 @@
 
 (keymap-global-set "C-(" 'close-bracket-and-move-point)
 (keymap-global-set "C-{" 'close-brace-and-move-point)
-
-(keymap-global-set "C-c e p" 'flymake-goto-previous-error)
-(keymap-global-set "C-c e n" 'flymake-goto-next-error)
 
 ;; Disable key chord for set-goal-column, but skip warning
 (put 'set-goal-column 'disabled nil)
