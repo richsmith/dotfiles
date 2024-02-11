@@ -1,7 +1,7 @@
 # Ignore everything by default
 *
 
-# Except what we decide to check in!
+# ...except what we decide to check in!
 
 !Readme.md
 !Makefile
@@ -11,6 +11,8 @@
 !emacs/.config/emacs/
 !emacs/.config/emacs/early-init.el
 !emacs/.config/emacs/init.el
+!emacs/.config/emacs/init/
+!emacs/.config/emacs/init/*.org
 
 !terminator/
 !terminator/**

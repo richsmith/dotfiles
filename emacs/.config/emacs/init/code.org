@@ -1,0 +1,187 @@
+* Common
+#+begin_src emacs-lisp
+
+(use-package eglot
+  :ensure t
+  :defer t
+  :hook (python-mode . eglot-ensure)
+  :bind (("C-c r" . eglot-rename)
+         ("C-c C-r" . eglot-rename)))
+
+(use-package tree-sitter
+  :ensure t
+  :config
+  (global-tree-sitter-mode)
+  (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
+(use-package tree-sitter-langs
+  :after tree-sitter
+  :ensure t)
+
+(use-package editorconfig)
+
+(use-package direnv
+  :config
+  (direnv-mode))
+
+(use-package flymake
+  :bind
+  (("C-c e p" . flymake-goto-previous-error)
+   ("C-c e n" . flymake-goto-next-error)))
+
+(use-package copilot
+  :straight (:host github :repo "zerolfx/copilot.el" :files ("dist" "*.el"))
+  :ensure t
+  :hook (prog-mode . copilot-mode)
+  :bind (("C-c M-f" . copilot-accept-completion-by-word)
+         ("C-c <tab>" . copilot-accept-completion)
+         :map copilot-completion-map
+         ("C-g" . 'copilot-clear-overlay)
+         ("M-P" . 'copilot-previous-completion)
+         ("M-N" . 'copilot-next-completion)
+         ("<tab>" . 'copilot-accept-completion)
+         ("M-f" . 'copilot-accept-completion-by-word)
+         ("M-e" . copilot-accept-completion-by-line)
+         ("M-n" . copilot-accept-completion-by-line))
+  :custom-face (copilot-overlay-face ((t :foreground "silver" :underline t)))
+  :config
+  (setq copilot-log-max 10000)
+  (setq copilot-node-executable
+        (executable-find "node")))
+
+;; Currently disabled due to issues with eglot
+;; See https://github.com/joaotavora/eglot/discussions/1127
+;; (use-package corfu
+;;   :custom
+;;   ((corfu-auto t)                 ;; Enable auto completion
+;;    (corfu-scroll-margin 5)        ;; Use scroll margin
+;;    (corfu-min-width 48)
+;;    (corfu-separator ?\s))
+;;   :bind ((:map corfu-map
+;;                ("<enter>" . nil)))
+;;   :init
+;;   (global-corfu-mode))
+
+;; Promising package but doesn't seem to be there yet
+;; (use-package combobulate
+;;   :straight (:host github :repo "mickeynp/combobulate")
+;;   ; :vc (:fetcher github :repo mickeynp/combobulate)
+;;   :preface
+;;   ;; You can customize Combobulate's key prefix here.
+;;   ;; Note that you may have to restart Emacs for this to take effect!
+;;   (setq combobulate-key-prefix "C-c o")
+
+;;   ;; Optional, but recommended.
+;;   ;;
+;;   ;; You can manually enable Combobulate with `M-x
+;;   ;; combobulate-mode'.
+;;   :hook ((python-ts-mode . combobulate-mode)
+;;          (js-ts-mode . combobulate-mode)
+;;          (css-ts-mode . combobulate-mode)
+;;          (yaml-ts-mode . combobulate-mode)
+;;          (json-ts-mode . combobulate-mode)
+;;          (typescript-ts-mode . combobulate-mode)
+;;          (tsx-ts-mode . combobulate-mode)))
+
+#+end_src
+
+
+* Python
+Recommend installing
+pip install pyls-black pyls-isort pyls-mypy
+For local Python saves add to .dir-locals.el
+((python-mode
+ (eval python-isort-on-save-mode)
+ (eval blacken-mode)))
+
+#+begin_src emacs-lisp
+(use-package python
+  :init
+  (setq python-fill-docstring-style 'django))
+
+(use-package python-isort
+  :ensure t
+  :after python)
+
+(use-package python-black
+  :demand t
+  :after python
+  :hook (python-mode . python-black-on-save-mode-enable-dwim))
+
+#+end_src
+
+* JS
+#+begin_src emacs-lisp
+
+(use-package js2-mode
+  :mode ("\\.js\\'" . js2-mode)
+  :hook
+  (js2-mode . ac-js2-mode)
+  :config
+  (setq js-indent-level 2))
+
+(use-package typescript-mode
+  :mode ("\\.htm?\\|\\.tsx$"))
+
+(use-package json-mode
+  :ensure t)
+
+#+end_src
+
+* Lisp
+#+begin_src emacs-lisp
+
+;;(add-to-list 'load-path "/Applications/slime-2.0")
+;(add-to-list 'load-path "/usr/share/emacs22/site-lisp/slime")
+
+;; (require 'slime)
+;; (add-hook 'lisp-mode-hook (lambda () (slime-mode t)))
+;; (add-hook 'inferior-lisp-mode-hook (lambda () (inferior-slime-mode t)))
+;(slime-setup)
+
+;;(setq inferior-lisp-program "sbcl")
+;;(setq inferior-lisp-program "/opt/local/bin/sbcl")
+;;(setq inferior-lisp-program "/Applications/cmucl-2004-07-25-090-ppc-darwin/bin/lisp")
+;;(setq inferior-lisp-program "/opt/local/bin/clisp")
+;;(setq lisp-indent-function 'common-lisp-indent-function)
+
+#+end_src
+
+
+* Other langs
+#+begin_src emacs-lisp
+
+(use-package web-mode
+  :ensure t
+  :mode (("\\.html?\\'" . web-mode)
+         ("\\.ejs\\'" . web-mode))
+  :config
+  (setq web-mode-enable-current-element-highlight t)
+  (setq web-mode-enable-current-column-highlight t)
+  (setq web-mode-markup-indent-offset 2)
+  (setq web-mode-css-indent-offset 2)
+  (setq web-mode-code-indent-offset 2)
+  (setq web-mode-indent-style 2))
+
+(use-package css-mode
+  :mode (("\\.scss$" . css-mode)
+         ("\\.css$" . css-mode)))
+
+(setq sql-indent-level 2)
+
+(use-package terraform-mode
+  :ensure t)
+
+(use-package markdown-mode
+  :ensure t
+  :mode ("\\.md\\'" . markdown-mode))
+
+(use-package yaml-mode
+  :ensure t)
+
+(use-package dotenv-mode
+  :ensure t)
+
+(use-package dockerfile-mode
+  :ensure t)
+
+#+end_src

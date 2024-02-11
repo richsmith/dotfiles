@@ -1,0 +1,164 @@
+* Nav Packages
+#+begin_src emacs-lisp
+
+(use-package vertico
+  :bind (:map vertico-map
+              ("C-j" . vertico-insert))
+  :init
+  (vertico-mode)
+  (setq vertico-scroll-margin 5)
+  (setq vertico-count 25))
+
+(use-package projectile
+  :ensure t
+  :init
+  (projectile-mode +1)
+  :bind (("C-x M-F" . projectile-find-file-in-known-projects)
+         :map projectile-mode-map
+         ("s-p" . projectile-command-map)
+         ("C-c p" . projectile-command-map)))
+
+(use-package consult
+  :bind (("C-c h" . consult-history)
+         ("C-c m" . consult-mode-command)
+         ("C-c k" . consult-kmacro)
+         ;; C-x bindings (ctl-x-map)
+         ("C-x M-:" . consult-complex-command)
+         ("C-x b" . consult-buffer)
+         ("C-x 4 b" . consult-buffer-other-window)
+         ("C-x 5 b" . consult-buffer-other-frame)
+         ("C-x r b" . consult-bookmark)
+         ("C-x p b" . consult-project-buffer)
+         ;; Custom M-# bindings for fast register access
+         ("M-#" . consult-register-load)
+         ("M-'" . consult-register-store)
+         ("C-M-#" . consult-register)
+         ;; Other custom bindings
+         ("M-y" . consult-yank-pop)
+         ;; M-g bindings (goto-map)
+         ("M-g e" . consult-compile-error)
+         ("M-g f" . consult-flymake)
+         ("M-g g" . consult-goto-line)
+         ("M-g M-g" . consult-goto-line)
+         ("M-g l" . consult-goto-line)
+         ("M-g M-l" . consult-goto-line)
+         ("M-g o" . consult-outline)
+         ("M-g m" . consult-mark)
+         ("M-g k" . consult-global-mark)
+         ("M-g i" . consult-imenu)
+         ("M-g I" . consult-imenu-multi)
+         ;; M-s bindings (search-map)
+         ("M-s d" . consult-find)
+         ("M-s D" . consult-locate)
+         ("M-s g" . consult-grep)
+         ("M-s G" . consult-git-grep)
+         ("M-s r" . consult-ripgrep)
+         ("M-s l" . consult-line)
+         ("M-s L" . consult-line-multi) ; }
+         ("M-s b" . consult-line-multi) ; } AKA search project buffers
+         ("M-s m" . consult-multi-occur)
+         ("M-s k" . consult-keep-lines)
+         ("M-s u" . consult-focus-lines)
+         ("M-s w" . consult-yank-from-kill-ring)
+         ("M-s y" . consult-yank-from-kill-ring)
+         ;; Isearch integration
+         ("M-s e" . consult-isearch-history)
+         :map isearch-mode-map
+         ("M-e" . consult-isearch-history)
+         ("M-s e" . consult-isearch-history)
+         ("M-s l" . consult-line)
+         ("M-s L" . consult-line-multi)
+         ;; Minibuffer history
+         :map minibuffer-local-map
+         ("C-l" . up-directory)
+         ("M-s" . consult-history)
+         ("M-r" . consult-history))
+
+  :hook
+  (completion-list-mode . consult-preview-at-point-mode)
+
+  :config
+  (consult-customize
+   consult-theme :preview-key '(:debounce 0.2 any)
+   consult-multi-occur
+   consult-ripgrep consult-git-grep consult-grep
+   consult-bookmark consult-recent-file consult-xref
+   consult--source-bookmark consult--source-file-register
+   consult--source-recent-file consult--source-project-recent-file
+   :preview-key '(:debounce 0.4 any))
+
+  ;; Optionally configure the narrowing key.
+  ;; Both < and C-+ work reasonably well.
+  (setq consult-narrow-key "<") ;; (kbd "C-+")
+
+  ;; Optionally make narrowing help available in the minibuffer.
+  ;; You may want to use `embark-prefix-help-command' or which-key instead.
+  (define-key consult-narrow-map (vconcat consult-narrow-key "?") #'consult-narrow-help))
+
+(use-package savehist
+  :init
+  (savehist-mode))
+
+(use-package orderless
+  :ensure t
+  :init
+  (setq completion-styles '(orderless basic)
+        completion-category-defaults nil
+        completion-category-overrides '((file (styles partial-completion)))))
+
+(use-package marginalia
+  :ensure t
+  :after vertico
+  :bind
+  (:map minibuffer-local-map
+         ("M-A" . marginalia-cycle))
+  :init
+  (marginalia-mode))
+
+(use-package embark
+  :ensure t
+  :bind (("C->" . embark-act)
+         ("C-;" . embark-dwim)
+         ("C-h B" . embark-bindings))
+  :init
+  (setq prefix-help-command #'embark-prefix-help-command)
+  :config
+  (add-to-list 'display-buffer-alist
+               '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+                 nil
+                 (window-parameters (mode-line-format . none)))))
+
+(use-package embark-consult
+  :ensure t
+  :after (embark consult)
+  :demand t
+  :hook
+  (embark-collect-mode . consult-preview-at-point-mode))
+
+#+end_src
+
+
+* Scrolling
+#+begin_src emacs-lisp
+
+(defun scroll-up-preserve-location ()
+  "Scroll up a line without moving the cursor position"
+  (interactive)
+  (scroll-up-line)
+  (next-line))
+
+(defun scroll-down-preserve-location ()
+  "Scroll down a line without moving the cursor position"
+  (interactive)
+  (scroll-down-line)
+  (previous-line))
+
+(setq scroll-step 1)
+(setq scroll-conservatively 100000)
+(setq scroll-margin 10)
+(keymap-global-set "M-p" 'scroll-down-preserve-location)
+(keymap-global-set "M-n" 'scroll-up-preserve-location)
+(global-set-key (kbd "C-M-p") (kbd "C-u 8 C-p"))
+(global-set-key (kbd "C-M-n") (kbd "C-u 8 C-n"))
+
+#+end_src

@@ -1,0 +1,225 @@
+* Handy Functions
+#+begin_src emacs-lisp
+(defun find-config ()
+  "Open the config file"
+  (interactive)
+  (find-file user-init-file))
+
+(defun find-custom ()
+  "Open the custom file"
+  (interactive)
+  (find-file custom-file))
+
+(defun pretty-print-xml-region (begin end)
+  (interactive "r")
+    (save-excursion (nxml-mode)
+            (goto-char begin)
+            (while (search-forward-regexp "\>[ \\t]*\<" nil t)
+              (backward-char)
+              (insert "\n"))
+            (indent-region begin end))
+    (message "XML pretty-printed :)"))
+
+(defun get-random ()
+  (interactive)
+  (insert (format "%d" (random))))
+
+(defun flip-a-coin ()
+  (interactive)
+  (if (= (random 2) 0)
+      (message "Heads")
+    (message "Tails")))
+
+(defun replace-with-md5 (p1 p2)
+  (interactive "r")
+  (let ((md5-value (md5 (buffer-substring-no-properties p1 p2))))
+    (delete-region (region-beginning) (region-end))
+    (insert md5-value)))
+
+(defun rotate-windows (arg)
+  "Rotate your windows; use the prefix argument to rotate the other direction"
+  (interactive "P")
+  (if (not (> (count-windows) 1))
+      (message "You can't rotate a single window")
+    (let* ((rotate-times (if (and (numberp arg) (not (= arg 0))) arg 1))
+           (direction (if (or (< rotate-times 0) (equal arg '(4)))
+                          'reverse
+                        (lambda (x) x)))
+           (i 0))
+      (while (not (= rotate-times 0))
+        (while  (< i (- (count-windows) 1))
+          (let* ((w1 (elt (funcall direction (window-list)) i))
+                 (w2 (elt (funcall direction (window-list)) (+ i 1)))
+                 (b1 (window-buffer w1))
+                 (b2 (window-buffer w2))
+                 (s1 (window-start w1))
+                 (s2 (window-start w2))
+                 (p1 (window-point w1))
+                 (p2 (window-point w2)))
+            (set-window-buffer-start-and-point w1 b2 s2 p2)
+            (set-window-buffer-start-and-point w2 b1 s1 p1)
+            (setq i (1+ i))))
+
+        (setq i 0
+              rotate-times
+              (if (< rotate-times 0) (1+ rotate-times) (1- rotate-times)))))))
+
+(defun close-brace-and-move-point ()
+  (interactive)
+  (insert "{")
+  (insert "}")
+  (backward-char)
+  (newline-and-indent)
+  (previous-line)
+  (end-of-line)
+  (newline-and-indent))
+
+(defun close-bracket-and-move-point ()
+  (interactive)
+  (insert "(")
+  (insert ")")
+  (backward-char))
+
+(defun close-double-quotes-and-move-point ()
+  (interactive)
+  (insert "\"")
+  (insert "\"")
+  (backward-char))
+
+(defun close-quotes-and-move-point ()
+  (interactive)
+  (insert "'")
+  (insert "'")
+  (backward-char))
+
+(defun rename-current-buffer-file ()
+  "Renames current buffer and file it is visiting."
+  (interactive)
+  (let ((name (buffer-name))
+        (filename (buffer-file-name)))
+    (if (not (and filename (file-exists-p filename)))
+        (error "Buffer '%s' is not visiting a file" name)
+      (let ((new-name (read-file-name "New name: " filename nil nil)))
+        (if (get-buffer new-name)
+            (error "A buffer named '%s' already exists" new-name)
+          (rename-file filename new-name 1)
+          (rename-buffer new-name)
+          (set-visited-file-name new-name)
+          (set-buffer-modified-p nil)
+          (message "File '%s' successfully renamed to '%s'"
+                   name (file-name-nondirectory new-name)))))))
+
+(defun mask-text (start end mask-char)
+  "Overwrite the region with the selected mask character."
+ (interactive "@*r\ncMasking character: ")
+ (let ((region-length (- end start))
+       (original-point (point)))
+  (delete-region start end)
+  (goto-char start)
+  (insert-char mask-char region-length)
+  (goto-char original-point)))
+
+(defun up-directory (path)
+  "Move up a directory in PATH without affecting the kill buffer."
+  (interactive "p")
+  (if (string-match-p "/." (minibuffer-contents))
+      (let ((end (point)))
+   (re-search-backward "/.")
+   (forward-char)
+   (delete-region (point) end))))
+
+(defun get-buffers-matching-mode (mode)
+  "Returns a list of buffers where their major-mode is equal to MODE"
+  (let ((buffer-mode-matches '()))
+    (dolist (buf (buffer-list))
+      (with-current-buffer buf
+        (when (eq mode major-mode)
+          (push buf buffer-mode-matches))))
+    buffer-mode-matches))
+
+(defun multi-occur-in-this-mode ()
+  "Show all lines matching REGEXP in buffers with this major mode."
+  (interactive)
+  (consult-multi-occur
+   (get-buffers-matching-mode major-mode)
+   (car (occur-read-primary-args))))
+
+(defun toggle-recursive-minibuffers ()
+  "Toggle recursive minibuffers"
+  (interactive)
+  (setq enable-recursive-minibuffers (not enable-recursive-minibuffers))
+  (message "recursive minibuffers is now %s"
+           (if enable-recursive-minibuffers "enabled" "disabled")))
+  
+
+(global-subword-mode 1)
+(delete-selection-mode 1)
+(put 'upcase-region 'disabled nil)
+(setq-default indent-tabs-mode nil)
+(setq-default dired-listing-switches "-alhv")
+(setq default-tab-width 4)
+(setq dabbrev-case-fold-search nil)
+(setq sentence-end-double-space nil)
+(setq fill-column 100)
+(setq comment-fill-column 100)
+(setq vc-follow-symlinks nil)
+(setq confirm-kill-processes nil)
+
+
+(keymap-global-set "M-H"
+                   (lambda ()
+                     (interactive)
+                     (if mark-active (backward-paragraph) (mark-paragraph))))
+
+
+;; Display
+(setq-default transient-mark-mode t) ; show selections
+(require 'paren) (show-paren-mode 1) ; highlight matching ()s
+(global-font-lock-mode t)  ; syntax highlighting
+(line-number-mode t)       ; show line number
+(column-number-mode t)     ; show column number
+
+(blink-cursor-mode -1) ; stop the cursor blinking
+
+; stop at the end of the file, not just add lines
+(setq next-line-add-newlines nil)
+
+(setq highlight-tail-mode 1)
+
+(add-hook 'kill-emacs-query-functions
+          (lambda () (y-or-n-p "Exit Emacs? "))
+          'append)
+
+(define-key minibuffer-local-filename-completion-map
+            [C-l] #'up-directory)
+
+
+;;; ***************************************************************************
+;;; Keys
+;;; (Keep at the bottom to avoid being clobbered by various modes)
+
+(keymap-global-set "C-x M-f" 'project-find-file)
+
+
+(keymap-global-set "C-S-j"
+                   (lambda ()
+                     (interactive)
+                     (join-line -1)))
+
+(autoload 'zap-up-to-char "misc"
+  "Kill up to, but not including ARGth occurrence of CHAR.")
+(keymap-global-set "M-z" 'zap-up-to-char)
+
+(keymap-global-set "C-'" 'close-quotes-and-move-point)
+(keymap-global-set "M-\"" 'close-double-quotes-and-move-point)
+
+(keymap-global-set "C-(" 'close-bracket-and-move-point)
+(keymap-global-set "C-{" 'close-brace-and-move-point)
+
+;; Disable key chord for set-goal-column, but skip warning
+(put 'set-goal-column 'disabled nil)
+(keymap-global-set "C-x C-n" nil)
+
+(setq tern-command '("tern" "--no-port-file"))
+
+#+end_src

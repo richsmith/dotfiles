@@ -1,0 +1,93 @@
+* Package Setup
+#+begin_src emacs-lisp
+
+(require 'package)
+(setq package-archives
+      '(("gnu" . "https://elpa.gnu.org/packages/")
+        ("melpa" . "https://melpa.org/packages/")))
+
+(package-initialize)
+
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package))
+(setq use-package-always-ensure t)
+
+;; Use straight for fetching packages straight from git
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+      (bootstrap-version 6))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+       "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+#+end_src
+
+* Core Emacs Config
+#+begin_src emacs-lisp
+
+(use-package emacs
+  :hook
+  ((emacs-startup-hook .
+   (lambda ()
+     (message "Emacs ready in %s with %d garbage collections."
+              (format "%.2f seconds"
+                      (float-time
+                       (time-subtract after-init-time before-init-time)))
+              gcs-done)))
+
+   (kill-emacs-query-functions .
+    (lambda () (y-or-n-p "Exit Emacs? "))))
+  
+  :bind (("<del>" . delete-char)
+         ("M-<backspace>" . backward-kill-sexp)
+         ("C-x C-r" . rename-current-buffer-file)
+         ("C-x M-o" . other-frame)
+         ("C-x 0" . previous-multiframe-window)
+         ("C-x t" . rotate-windows)
+         ("C-M-g" . top-level)
+         ("C-z" . repeat)
+         ("M-+" . comment-region)
+         ("M-\-" . uncomment-region)
+         ("M-_" . uncomment-region)
+         ("<f12>" . visual-line-mode)
+         ("C-<tab>" . whitespace-mode)
+         ("C-S-p" . backward-sexp)
+         ("C-S-n" . forward-sexp))
+
+  :init
+  ;; Put autosave & backup files somewhere tidy
+  (setq backup-directory-alist
+        `(("." . ,(concat user-emacs-directory "backups"))))
+  (setq auto-save-file-name-transforms
+        `((".*" ,temporary-file-directory t)))
+  (setq create-lockfiles nil)
+
+  ;; absolutely DO NOT beep at me
+  (setq ring-bell-function `ignore)
+  
+  ;; Handy but messy; unsure of this one!
+  ;; (setq enable-recursive-minibuffers t)
+
+  ;; Do not allow the cursor in the minibuffer prompt
+  (setq minibuffer-prompt-properties
+        '(read-only t cursor-intangible t face minibuffer-prompt))
+  (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
+
+  ;; stop closing windows on repeated presses of escape
+  (defadvice keyboard-escape-quit (around my-keyboard-escape-quit activate)
+    (let (orig-one-window-p)
+      (fset 'orig-one-window-p (symbol-function 'one-window-p))
+      (fset 'one-window-p (lambda (&optional nomini all-frames) t))
+      (unwind-protect
+          ad-do-it
+        (fset 'one-window-p (symbol-function 'orig-one-window-p)))))
+
+  )
+
+#+end_src

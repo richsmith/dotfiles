@@ -1,0 +1,14 @@
+* Org
+#+begin_src emacs-lisp
+(use-package org
+  :hook (org-mode . visual-line-mode)
+  :bind (("C-c a" . org-agenda)
+         ("C-c c" . org-capture))
+  :config
+  (setq org-directory "~/org")
+  (setq org-agenda-files
+        (mapcar (lambda (path) (concat org-directory path))
+                '("/agenda/todo.org")))
+  (setq org-src-preserve-indentation nil
+        org-edit-src-content-indentation 0))
+#+end_src
