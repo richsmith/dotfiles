@@ -96,7 +96,10 @@ For local Python saves add to .dir-locals.el
 #+begin_src emacs-lisp
 (use-package python
   :init
-  (setq python-fill-docstring-style 'django))
+  (setq python-fill-docstring-style 'django)
+  :config
+  (when (executable-find "ipython")
+    (setq python-shell-interpreter "ipython")))
 
 (use-package python-isort
   :ensure t
