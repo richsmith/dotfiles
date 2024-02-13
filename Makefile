@@ -1,4 +1,4 @@
-setup: install_packages setup_dotfiles
+setup: setup_dotfiles
 
 install_packages:
 	@if command -v apt >/dev/null 2>&1; then \
@@ -11,10 +11,13 @@ package_install_apt_core:
 package_install_apt_media:
 	sudo apt update && xargs -a packages/packages-apt-media sudo apt install -y
 
-setup_dotfiles: setup_zsh setup_emacs setup_terminator
+setup_dotfiles: setup_zsh setup_git setup_emacs setup_terminator
 
 setup_zsh:
 	stow zsh --target=${HOME}
+
+setup_git:
+	stow git --target=${HOME}
 
 setup_emacs:
 	stow emacs --target=${HOME}

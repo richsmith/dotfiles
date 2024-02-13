@@ -1,10 +1,18 @@
 # Ignore everything by default
 *
 
-# ...except what we decide to check in!
+# ...except what we decide to check in
 
 !Readme.md
 !Makefile
+
+!zsh/
+!zsh/.zshrc
+
+!git/
+!git/.config/
+!git/.config/git/
+!git/.config/git/config
 
 !emacs/
 !emacs/.config/
@@ -16,9 +24,6 @@
 
 !terminator/
 !terminator/**
-
-!zsh/
-!zsh/.zshrc
 
 !packages/
 !packages/**

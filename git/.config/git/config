@@ -1,0 +1,15 @@
+[user]
+	name = Rich Smith
+[pull]
+	rebase = false
+[core]
+	excludesFile = ~/.gitignore
+	editor = emacs -nw -q
+[push]
+	autoSetupRemote = true
+
+[alias]
+	recent-branches = for-each-ref --sort=-committerdate --count=10 --format='%(refname:short)' refs/heads/
+	branch-history = recent-branches
+[branch]
+	sort = -committerdate
