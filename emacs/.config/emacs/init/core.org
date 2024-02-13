@@ -51,6 +51,7 @@
          ("C-x 0" . previous-multiframe-window)
          ("C-x t" . rotate-windows)
          ("C-M-g" . top-level)
+         ("C-x C-z" . repeat)
          ("C-z" . repeat)
          ("M-+" . comment-region)
          ("M-\-" . uncomment-region)
