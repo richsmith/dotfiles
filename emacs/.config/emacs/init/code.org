@@ -4,18 +4,53 @@
 (use-package eglot
   :ensure t
   :defer t
-  :hook (python-mode . eglot-ensure)
+  :hook (python-ts-mode . eglot-ensure)
   :bind (("C-c r" . eglot-rename)
          ("C-c C-r" . eglot-rename)))
+
+(use-package dape
+  :ensure t
+  :straight (:host github :repo "svaante/dape")
+  :after eglot
+  :config
+  (add-to-list 'dape-configs
+               (debugpy
+                modes (python-ts-mode python-mode)
+                command "python3"
+                command-args ("-m" "debugpy.adapter")
+                :type "executable"
+                :request "launch"
+                :cwd dape-cwd-fn
+                :program dape-buffer-default))
+  (add-hook 'dape-on-stopped-hooks 'dape-info)
+  (add-hook 'dape-on-stopped-hooks 'dape-repl)
+  (setq dape-key-prefix "\C-x\C-a")
+  (setq dape-cwd-fn 'projectile-project-root))
 
 (use-package tree-sitter
   :ensure t
   :config
   (global-tree-sitter-mode)
   (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
+(use-package treesit-auto
+  :config
+  (global-treesit-auto-mode))
 (use-package tree-sitter-langs
   :after tree-sitter
   :ensure t)
+
+(use-package combobulate
+  :after tree-sitter
+  :straight (:host github :repo "mickeynp/combobulate")
+  :preface
+  (setq combobulate-key-prefix "C-c o")
+  :hook ((python-ts-mode . combobulate-mode)
+         (js-ts-mode . combobulate-mode)
+         (css-ts-mode . combobulate-mode)
+         (yaml-ts-mode . combobulate-mode)
+         (json-ts-mode . combobulate-mode)
+         (typescript-ts-mode . combobulate-mode)
+         (tsx-ts-mode . combobulate-mode)))
 
 (use-package editorconfig)
 
@@ -34,13 +69,6 @@
   :hook (prog-mode . copilot-mode)
   :bind (("C-c M-f" . copilot-accept-completion-by-word)
          ("C-c <tab>" . copilot-accept-completion)
-         :map copilot-completion-map
-         ("C-g" . 'copilot-clear-overlay)
-         ("M-P" . 'copilot-previous-completion)
-         ("M-N" . 'copilot-next-completion)
-         ("<tab>" . 'copilot-accept-completion)
-         ("M-f" . 'copilot-accept-completion-by-word)
-         ("M-e" . copilot-accept-completion-by-line)
          ("M-n" . copilot-accept-completion-by-line))
   :custom-face (copilot-overlay-face ((t :foreground "silver" :underline t)))
   :config
@@ -61,33 +89,13 @@
 ;;   :init
 ;;   (global-corfu-mode))
 
-;; Promising package but doesn't seem to be there yet
-;; (use-package combobulate
-;;   :straight (:host github :repo "mickeynp/combobulate")
-;;   ; :vc (:fetcher github :repo mickeynp/combobulate)
-;;   :preface
-;;   ;; You can customize Combobulate's key prefix here.
-;;   ;; Note that you may have to restart Emacs for this to take effect!
-;;   (setq combobulate-key-prefix "C-c o")
-
-;;   ;; Optional, but recommended.
-;;   ;;
-;;   ;; You can manually enable Combobulate with `M-x
-;;   ;; combobulate-mode'.
-;;   :hook ((python-ts-mode . combobulate-mode)
-;;          (js-ts-mode . combobulate-mode)
-;;          (css-ts-mode . combobulate-mode)
-;;          (yaml-ts-mode . combobulate-mode)
-;;          (json-ts-mode . combobulate-mode)
-;;          (typescript-ts-mode . combobulate-mode)
-;;          (tsx-ts-mode . combobulate-mode)))
 
 #+end_src
 
 
 * Python
 Recommend installing
-pip install pyls-black pyls-isort pyls-mypy
+pip install pyls-black pyls-isort pyls-mypy debugpy
 For local Python saves add to .dir-locals.el
 ((python-mode
  (eval python-isort-on-save-mode)
@@ -98,6 +106,7 @@ For local Python saves add to .dir-locals.el
   :init
   (setq python-fill-docstring-style 'django)
   :config
+  (setq eldoc-idle-delay 0.2)
   (when (executable-find "ipython")
     (setq python-shell-interpreter "ipython")))
 

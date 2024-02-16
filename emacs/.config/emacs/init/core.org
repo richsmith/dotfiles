@@ -53,6 +53,8 @@
          ("C-M-g" . top-level)
          ("C-x C-z" . repeat)
          ("C-z" . repeat)
+         ("C-d" . delete-char)
+         ("C-S-D" . delete-backward-char)
          ("M-+" . comment-region)
          ("M-\-" . uncomment-region)
          ("M-_" . uncomment-region)
