@@ -24,12 +24,13 @@
   (mapcar (lambda (file-name) (expand-file-name file-name init-dir))
           init-file-names)
   "List of org files to load.")
-  
+
+;; Load the initialisation files
 (defun load-init-file (file-name)
   (org-babel-load-file (expand-file-name file-name init-dir)))
 (mapc 'load-init-file init-files)
 
-;; Load the initialisation files
+;; Provision for opening initialisation files
 (defun find-init ()
   "Open an init file."
   (interactive)
