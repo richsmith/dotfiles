@@ -1,4 +1,4 @@
-* Org
+* Packages
 #+begin_src emacs-lisp
 
 (use-package org
@@ -14,4 +14,17 @@
         org-src-preserve-indentation nil
         org-edit-src-content-indentation 0))
 
+#+end_src
+
+* Functions
+#+begin_src emacs-lisp
+(defvar note-files
+  (directory-files "~/org/notes" t "\.org$")
+  "List of org files to select from.")
+(defun find-note ()
+  "Open an org note."
+  (interactive)
+  (let ((file (completing-read "Select note: " note-files)))
+    (when file
+      (find-file file))))
 #+end_src
