@@ -18,14 +18,14 @@
   :after (eglot python)
   :config
   (add-to-list 'dape-configs
-               (debugpy
-                modes (python-ts-mode python-mode)
-                command "python3"
-                command-args ("-m" "debugpy.adapter")
-                :type "executable"
-                :request "launch"
-                :cwd dape-cwd-fn
-                :program dape-buffer-default))
+               `(debugpy
+                 modes (python-ts-mode python-mode)
+                 command "python3"
+                 command-args ("-m" "debugpy.adapter")
+                 :type "executable"
+                 :request "launch"
+                 :cwd dape-cwd-fn
+                 :program dape-buffer-default))
   (add-hook 'dape-on-stopped-hooks 'dape-info)
   (add-hook 'dape-on-stopped-hooks 'dape-repl)
   (setq dape-key-prefix "\C-x\C-a")
