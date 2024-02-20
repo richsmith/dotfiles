@@ -1,6 +1,10 @@
 * Common
 #+begin_src emacs-lisp
 
+(use-package prog-mode
+  :ensure nil
+  :hook (prog-mode . display-line-numbers-mode))
+
 (use-package eglot
   :ensure t
   :defer t

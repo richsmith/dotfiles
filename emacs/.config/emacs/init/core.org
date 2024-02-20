@@ -45,6 +45,8 @@
                        (time-subtract after-init-time before-init-time)))
               gcs-done)))
 
+   (delete-frame-functions .
+    (lambda (frame) (y-or-n-p "Exit Emacs frame? ")))
    (kill-emacs-query-functions .
     (lambda () (y-or-n-p "Exit Emacs? "))))
   
@@ -93,8 +95,6 @@
       (fset 'one-window-p (lambda (&optional nomini all-frames) t))
       (unwind-protect
           ad-do-it
-        (fset 'one-window-p (symbol-function 'orig-one-window-p)))))
-
-  )
+        (fset 'one-window-p (symbol-function 'orig-one-window-p))))))
 
 #+end_src

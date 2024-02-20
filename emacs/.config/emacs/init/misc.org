@@ -150,7 +150,14 @@
   (setq enable-recursive-minibuffers (not enable-recursive-minibuffers))
   (message "recursive minibuffers is now %s"
            (if enable-recursive-minibuffers "enabled" "disabled")))
-  
+
+(defun toggle-window-lock ()
+  (interactive)
+  (let ((window (selected-window)))
+    (set-window-dedicated-p window (not (window-dedicated-p window))))
+  (message "Window %slocked to %s"
+           (if (window-dedicated-p) "" "no longer ")
+           (buffer-name)))
 
 (global-subword-mode 1)
 (delete-selection-mode 1)
