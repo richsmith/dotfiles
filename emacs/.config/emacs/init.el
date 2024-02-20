@@ -25,11 +25,6 @@
           init-file-names)
   "List of org files to load.")
 
-;; Load the initialisation files
-(defun load-init-file (file-name)
-  (org-babel-load-file (expand-file-name file-name init-dir)))
-(mapc 'load-init-file init-files)
-
 ;; Provision for opening initialisation files
 (defun find-init ()
   "Open an init file."
@@ -37,6 +32,11 @@
   (let ((file (completing-read "Select init file: " init-files)))
     (when file
       (find-file file))))
+
+;; Load the initialisation files
+(defun load-init-file (file-name)
+  (org-babel-load-file (expand-file-name file-name init-dir)))
+(mapc 'load-init-file init-files)
 
 ;; Load machine-localised settings if present
 ;; (Do this after everything else so that it can override settings)

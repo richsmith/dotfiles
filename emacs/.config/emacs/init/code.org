@@ -11,7 +11,7 @@
 (use-package dape
   :ensure t
   :straight (:host github :repo "svaante/dape")
-  :after eglot
+  :after (eglot python)
   :config
   (add-to-list 'dape-configs
                (debugpy
@@ -33,6 +33,7 @@
   (global-tree-sitter-mode)
   (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
 (use-package treesit-auto
+  :after tree-sitter
   :config
   (global-treesit-auto-mode))
 (use-package tree-sitter-langs
