@@ -60,10 +60,12 @@ if [ -x "$(command -v ncal)" ]; then
 fi
 
 
-# Aliases
+# Aliases, commands and shortcuts
 go() {
   cd "$1" && ls
 }
+bindkey "$key[Up]" history-beginning-search-backward
+bindkey "$key[Down]" history-beginning-search-forward
 alias ll="ls -l"
 alias tree="ls --tree"
 
