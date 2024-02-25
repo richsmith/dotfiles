@@ -1,13 +1,17 @@
 # Ignore everything by default
 *
 
-# ...except what we decide to check in
+# ...just track this stuff:
 
 !Readme.md
 !Makefile
 
-!zsh/
-!zsh/.zshrc
+!shell/
+!shell/.zshrc
+!shell/.config/
+!shell/.config/
+!shell/.config/zsh/
+!shell/.config/zsh/fzf-key-bindings.zsh
 
 !git/
 !git/.config/

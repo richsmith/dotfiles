@@ -11,10 +11,10 @@ package_install_apt_core:
 package_install_apt_media:
 	sudo apt update && xargs -a packages/packages-apt-media sudo apt install -y
 
-setup_dotfiles: setup_zsh setup_git setup_emacs setup_terminator
+setup_dotfiles: setup_shell setup_git setup_emacs setup_terminator
 
-setup_zsh:
-	stow zsh --target=${HOME}
+setup_shell:
+	stow shell --target=${HOME}
 
 setup_git:
 	stow git --target=${HOME}
