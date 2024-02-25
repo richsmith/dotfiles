@@ -55,6 +55,10 @@ if [ -x "$(command -v fzf)" ]; then
     source $ZDOTDIR/fzf-key-bindings.zsh
 fi
 
+if [ -x "$(command -v ncal)" ]; then
+    alias cal="ncal"
+fi
+
 
 # Aliases
 go() {
