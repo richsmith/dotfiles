@@ -145,19 +145,25 @@
    (car (occur-read-primary-args))))
 
 (defun toggle-recursive-minibuffers ()
-  "Toggle recursive minibuffers"
+  "Toggle recursive minibuffers."
   (interactive)
   (setq enable-recursive-minibuffers (not enable-recursive-minibuffers))
   (message "recursive minibuffers is now %s"
            (if enable-recursive-minibuffers "enabled" "disabled")))
 
 (defun toggle-window-lock ()
+  "Toggle whether this window is dedicated to its buffer."
   (interactive)
   (let ((window (selected-window)))
     (set-window-dedicated-p window (not (window-dedicated-p window))))
   (message "Window %slocked to %s"
            (if (window-dedicated-p) "" "no longer ")
            (buffer-name)))
+
+(defun insert-iso-date ()
+  "Insert the current date in ISO format."
+  (interactive)
+  (insert (format-time-string "%Y-%m-%d")))
 
 (global-subword-mode 1)
 (delete-selection-mode 1)
