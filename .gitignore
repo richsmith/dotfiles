@@ -9,7 +9,7 @@
 !shell/
 !shell/.zshrc
 !shell/.config/
-!shell/.config/
+!shell/.config/starship.toml
 !shell/.config/zsh/
 !shell/.config/zsh/fzf-key-bindings.zsh
 
