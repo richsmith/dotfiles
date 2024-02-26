@@ -59,6 +59,11 @@ if [ -x "$(command -v ncal)" ]; then
     alias cal="ncal"
 fi
 
+if [ -x "$(command -v kubectl)" ]; then
+    alias k="kubectl"
+    alias kc="kubectl"
+fi
+
 
 # Aliases, commands and shortcuts
 go() {
