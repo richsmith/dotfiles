@@ -63,6 +63,7 @@ fi
 if [ -x "$(command -v kubectl)" ]; then
     alias k="kubectl"
     alias kc="kubectl"
+    source <(kubectl completion zsh)
 fi
 
 
