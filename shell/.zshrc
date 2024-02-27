@@ -3,7 +3,8 @@ export PATH=$HOME/bin:/usr/local/bin:$HOME/.local/bin:$PATH
 export XDG_CONFIG_HOME=$HOME/.config
 export XDG_CACHE_HOME=$HOME/.cache
 export XDG_DATA_HOME=$HOME/.local/share
-export ZDOTDIR=$XDG_CONFIG_HOME/zsh
+# Setting as ZDOTDIR here gets painful...
+export ZSH_CONFIG=$XDG_CONFIG_HOME/zsh
 
 umask u=rwx,g=,o=
 set -o ignoreeof
@@ -52,7 +53,7 @@ if [ -x "$(command -v direnv)" ]; then
 fi
 
 if [ -x "$(command -v fzf)" ]; then
-    source $ZDOTDIR/fzf-key-bindings.zsh
+    source $ZSH_CONFIG/fzf-key-bindings.zsh
 fi
 
 if [ -x "$(command -v ncal)" ]; then
