@@ -14,17 +14,21 @@
 [alias]
         co = checkout
 
+        po = pull origin
+
+        push-new = !sh -c 'git push origin $(git branch --show-current)'
+        promote = push-new
+
         s = status -sb
 
         l = log --oneline
         last = log -1 HEAD --stat
 
-	recent-branches = for-each-ref --sort=-committerdate --count=10 --format='%(refname:short)' refs/heads/
+	recent-branches = for-each-ref --sort=-committerdate --count=16 --format='%(refname:short)' refs/heads/
         rb = recent-branches
 	branch-history = recent-branches
         bh = branch-history
 
 
 [branch]
-
 	sort = -committerdate
