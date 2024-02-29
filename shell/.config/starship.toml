@@ -18,7 +18,7 @@ success_symbol = "[➜ ](green)"
 error_symbol = "[➜ ](red)"
 
 [git_branch]
-format = "[$branch]($style)"
+format = '\[[$branch]($style)\]'
 style = "bright-black"
 
 [git_status]
@@ -37,8 +37,7 @@ format = '\([$state( $progress_current/$progress_total)]($style)\) '
 style = "bright-black"
 
 [cmd_duration]
-format = "[$duration]($style) "
-style = "yellow"
+format = '\[[$duration]($style)\] '
 
 [python]
 format = "[$virtualenv]($style) "
