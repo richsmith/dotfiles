@@ -9,7 +9,7 @@ $cmd_duration\
 $character"""
 
 [directory]
-home_symbol = "[~]"
+home_symbol = "~"
 style = "yellow"
 truncation_symbol = '…/'
 
