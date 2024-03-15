@@ -33,3 +33,7 @@ install_starship:
 	curl -sS https://starship.rs/install.sh | sh
 
 
+setup_typeahead:
+	sudo add-apt-repository ppa:lubomir-brindza/nautilus-typeahead
+	sudo apt dist-upgrade
+	nautilus -r
