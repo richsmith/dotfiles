@@ -2,6 +2,7 @@
 #+begin_src emacs-lisp
 
 (use-package minions
+  :ensure t
   :config (minions-mode 1))
 
 (use-package nyan-mode
@@ -9,11 +10,14 @@
   (setq nyan-bar-length 16)
   :config
   (nyan-mode t))
-(use-package beacon)
+(use-package beacon
+  :ensure t)
 
-(use-package nord-theme)
+(use-package nord-theme
+  :ensure t)
 
 (use-package atom-one-dark-theme
+  :ensure t
   :config
   (load-theme 'atom-one-dark t))
 

@@ -180,6 +180,7 @@ For local Python saves add to .dir-locals.el
   (setq web-mode-indent-style 2))
 
 (use-package css-mode
+  :ensure t
   :mode (("\\.scss$" . css-mode)
          ("\\.css$" . css-mode)))
 
