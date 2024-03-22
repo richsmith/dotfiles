@@ -38,6 +38,9 @@
   (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
 (use-package treesit-auto
   :after tree-sitter
+  :ensure t
+  :init
+  (setq treesit-auto-install t)
   :config
   (global-treesit-auto-mode))
 (use-package tree-sitter-langs
@@ -46,6 +49,7 @@
 
 (use-package combobulate
   :after tree-sitter
+  :ensure t
   :straight (:host github :repo "mickeynp/combobulate")
   :preface
   (setq combobulate-key-prefix "C-c o")
@@ -60,6 +64,7 @@
 (use-package editorconfig)
 
 (use-package direnv
+  :ensure t
   :config
   (direnv-mode))
 
@@ -68,12 +73,27 @@
   (("C-c e p" . flymake-goto-previous-error)
    ("C-c e n" . flymake-goto-next-error)))
 
+(use-package aggressive-indent
+  :ensure t
+  :hook ((emacs-lisp-mode . aggressive-indent-mode)
+         (emacs-lisp-mode . (lambda() (setq fill-column 80
+                                       auto-fill-mode 1)))))
+
 (use-package copilot
-  :straight (:host github :repo "zerolfx/copilot.el" :files ("dist" "*.el"))
+  :straight (:host github
+             :repo "copilot-emacs/copilot.el"
+             :branch "main")
   :ensure t
   :hook (prog-mode . copilot-mode)
   :bind (("C-c M-f" . copilot-accept-completion-by-word)
          ("C-c <tab>" . copilot-accept-completion)
+         :map copilot-completion-map
+         ("C-g" . 'copilot-clear-overlay)
+         ("M-P" . 'copilot-previous-completion)
+         ("M-N" . 'copilot-next-completion)
+         ("<tab>" . 'copilot-accept-completion)
+         ("M-f" . 'copilot-accept-completion-by-word)
+         ("M-e" . copilot-accept-completion-by-line)
          ("M-n" . copilot-accept-completion-by-line))
   :custom-face (copilot-overlay-face ((t :foreground "silver" :underline t)))
   :config
@@ -100,7 +120,7 @@
 
 * Python
 Recommend installing
-pip install pyls-black pyls-isort pyls-mypy debugpy
+pip install pyls-black pyls-isort pyls-mypy debugpy black isort
 For local Python saves add to .dir-locals.el
 ((python-mode
  (eval python-isort-on-save-mode)
