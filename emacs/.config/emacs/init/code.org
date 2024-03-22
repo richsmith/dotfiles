@@ -207,7 +207,9 @@ For local Python saves add to .dir-locals.el
 (setq sql-indent-level 2)
 
 (use-package terraform-mode
-  :ensure t)
+  :ensure t
+  :hook
+  (terraform-mode . terraform-format-on-save-mode))
 
 (use-package markdown-mode
   :ensure t
