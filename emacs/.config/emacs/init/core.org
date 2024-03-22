@@ -1,6 +1,10 @@
 * Package Setup
 #+begin_src emacs-lisp
 
+;; Need to set this or various packages complain
+(unless (boundp 'native-comp-deferred-compilation-deny-list)
+  (setq native-comp-deferred-compilation-deny-list nil))
+
 (require 'package)
 (setq package-archives
       '(("gnu" . "https://elpa.gnu.org/packages/")
@@ -30,10 +34,6 @@
 
 * Core Emacs Config
 #+begin_src emacs-lisp
-
-;; Need to set this or various packages complain
-(unless (boundp 'native-comp-deferred-compilation-deny-list)
-  (setq native-comp-deferred-compilation-deny-list nil))
 
 (use-package emacs
   :init 
