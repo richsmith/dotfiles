@@ -8,7 +8,6 @@
   :init
   (setq vertico-scroll-margin 5)
   (setq vertico-count 25)
-  :config
   (vertico-mode))
 
 
