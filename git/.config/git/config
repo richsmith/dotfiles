@@ -5,7 +5,7 @@
 	rebase = false
 
 [core]
-	excludesFile = ~/.gitignore
+	excludesfile = ~/.config/git/gitignore
 	editor = emacs -nw -q
 
 [push]

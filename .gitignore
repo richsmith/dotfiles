@@ -17,6 +17,7 @@
 !git/.config/
 !git/.config/git/
 !git/.config/git/config
+!git/.config/git/gitignore
 
 !emacs/
 !emacs/.config/
