@@ -15,18 +15,10 @@ export LANG=en_GB.UTF-8
 export EDITOR='emacs -nw'
 
 
-# Prompt
-if [ -x "$(command -v starship)" ]; then
-    export STARSHIP_CONFIG=$XDG_CONFIG_HOME/starship.toml
-    eval "$(starship init zsh)"
-else
-    PS1='%F{yellow}%~%f %F{green}➜%f '
-fi
-
-
 # History config
-HISTSIZE=100000
-export HISTFILE=$XDG_CONFIG_HOME/.zsh_history
+HISTSIZE=10000000
+SAVEHIST=10000000
+export HISTFILE=$ZSH_CONFIG/zsh_history
 setopt INC_APPEND_HISTORY
 setopt SHARE_HISTORY
 setopt HIST_EXPIRE_DUPS_FIRST
@@ -35,6 +27,15 @@ setopt HIST_FIND_NO_DUPS
 setopt HIST_IGNORE_SPACE
 setopt HIST_REDUCE_BLANKS
 setopt HIST_VERIFY
+
+
+# Prompt
+if [ -x "$(command -v starship)" ]; then
+    export STARSHIP_CONFIG=$XDG_CONFIG_HOME/starship.toml
+    eval "$(starship init zsh)"
+else
+    PS1='%F{yellow}%~%f %F{green}➜%f '
+fi
 
 
 # Hook in other applications if available
