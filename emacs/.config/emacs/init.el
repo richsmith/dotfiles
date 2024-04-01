@@ -19,10 +19,10 @@
     "org.org")
   "List of org initialisation file names to load.")
 (when (eq system-type 'darwin)
-  (add-to-list 'init-file-names "mac.org"))
+  (add-to-list 'init-org-file-names "mac.org"))
 (defvar init-org-files
   (mapcar (lambda (file-name) (expand-file-name file-name init-dir))
-          init-file-names)
+          init-org-file-names)
   "List of org files to load.")
 
 ;; Load the initialisation files
