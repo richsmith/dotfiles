@@ -38,7 +38,8 @@ fi
 
 [[ -o interactive ]] || return 0
 
-# CTRL-T - Paste the selected file path(s) into the command line
+# CTRL-O - Paste the selected file path(s) into the command line
+# [Changed from CTRL-T to allow for character transposition]
 __fsel() {
   local cmd="${FZF_CTRL_T_COMMAND:-"command find -L . -mindepth 1 \\( -path '*/\\.*' -o -fstype 'sysfs' -o -fstype 'devfs' -o -fstype 'devtmpfs' -o -fstype 'proc' \\) -prune \
     -o -type f -print \
@@ -68,7 +69,8 @@ fzf-file-widget() {
 zle     -N   fzf-file-widget
 bindkey '^O' fzf-file-widget
 
-# ALT-C - cd into the selected directory
+# CTRL-J - cd (jump) into the selected directory
+# [Changed from ALT-C to allow for capitalisation]
 fzf-cd-widget() {
   local cmd="${FZF_ALT_C_COMMAND:-"command find -L . -mindepth 1 \\( -path '*/\\.*' -o -fstype 'sysfs' -o -fstype 'devfs' -o -fstype 'devtmpfs' -o -fstype 'proc' \\) -prune \
     -o -type d -print 2> /dev/null | cut -b3-"}"
@@ -87,7 +89,7 @@ fzf-cd-widget() {
   return $ret
 }
 zle     -N    fzf-cd-widget
-bindkey '\ec' fzf-cd-widget
+bindkey '^J' fzf-cd-widget
 
 # CTRL-R - Paste the selected command from history into the command line
 fzf-history-widget() {
