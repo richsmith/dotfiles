@@ -1,6 +1,6 @@
 setup: setup_dotfiles
 
-setup_dotfiles: setup_shell setup_git setup_emacs setup_terminator
+setup_dotfiles: setup_shell setup_git setup_emacs setup_python setup_terminator
 
 setup_shell:
 	stow shell --target=${HOME}
@@ -10,6 +10,9 @@ setup_git:
 
 setup_emacs:
 	stow emacs --target=${HOME}
+
+setup_python:
+	stow python --target=${HOME}
 
 setup_terminator:
 	stow terminator --target=${HOME}
