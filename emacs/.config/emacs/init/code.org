@@ -135,14 +135,17 @@ For local Python saves add to .dir-locals.el
   (when (executable-find "ipython")
     (setq python-shell-interpreter "ipython")))
 
-(use-package python-isort
-  :ensure t
-  :after python)
-
-(use-package python-black
+(use-package blacken
   :demand t
   :after python
-  :hook (python-mode . python-black-on-save-mode-enable-dwim))
+  :hook ((python-ts-mode . blacken-mode)
+         (python-mode . blacken-mode)))
+
+(use-package python-isort
+  :hook ((python-ts-mode . python-isort-on-save-mode)
+         (python-mode . python-isort-on-save-mode))
+  :ensure t)
+
 
 #+end_src
 
