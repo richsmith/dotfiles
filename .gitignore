@@ -27,6 +27,12 @@
 !emacs/.config/emacs/init/
 !emacs/.config/emacs/init/*.org
 
+!python/
+!python/.config/
+!python/.config/ipython/
+!python/.config/ipython/profile_default/
+!python/.config/ipython/profile_default/ipython_config.py
+
 !terminator/
 !terminator/**
 
