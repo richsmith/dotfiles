@@ -7,6 +7,7 @@
 !Makefile
 
 !shell/
+!shell/.zshenv
 !shell/.zshrc
 !shell/.config/
 !shell/.config/starship.toml

@@ -1,10 +1,10 @@
-# Core stuff
-export PATH=$HOME/bin:/usr/local/bin:$HOME/.local/bin:$PATH
-export XDG_CONFIG_HOME=$HOME/.config
-export XDG_CACHE_HOME=$HOME/.cache
-export XDG_DATA_HOME=$HOME/.local/share
-# Setting as ZDOTDIR here gets painful...
-export ZSH_CONFIG=$XDG_CONFIG_HOME/zsh
+# Cache for zsh completion
+ZSH_CACHE="$XDG_CACHE_HOME"/zsh
+mkdir -p $ZSH_CACHE
+
+autoload -U compinit
+compinit -d "$ZSH_CACHE/zcompdump-$ZSH_VERSION"
+
 
 umask u=rwx,g=,o=
 set -o ignoreeof
@@ -78,6 +78,15 @@ alias ll="ls -l"
 alias tree="ls --tree"
 
 
+# Hacks and fixes
+alias monerod=monerod --data-dir "$XDG_DATA_HOME"/bitmonero
+export _JAVA_OPTIONS=-Djava.util.prefs.userRoot="$XDG_CONFIG_HOME"/java
+export MINIKUBE_HOME="$XDG_DATA_HOME"/minikube
+export GRADLE_USER_HOME="$XDG_DATA_HOME"/gradle
+export ANDROID_USER_HOME="$XDG_DATA_HOME"/android
+alias adb='HOME="$XDG_DATA_HOME"/android adb'
+alias wget=wget --hsts-file="$XDG_DATA_HOME/wget-hsts"
+
 # Friendly welcome message :)
 echo -e "\e[1;32mHi, $USER! Welcome to $HOST.\e[0m"
 
@@ -89,3 +98,5 @@ if [ -f $XDG_CONFIG_HOME/$ZSH_LOCAL ]; then
 elif [ -f $ZSH_CONFIG/$ZSH_LOCAL ]; then
     source $ZSH_CONFIG/$ZSH_LOCAL
 fi
+
+
