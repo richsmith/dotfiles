@@ -30,7 +30,7 @@ setopt HIST_VERIFY
 
 
 # Prompt
-if [ -x "$(command -v starship)" ]; then
+if [ "$TERM" != "dumb" ] && [ -x "$(command -v starship)" ]; then
     export STARSHIP_CONFIG=$XDG_CONFIG_HOME/starship.toml
     eval "$(starship init zsh)"
 else
