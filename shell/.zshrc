@@ -72,8 +72,10 @@ fi
 go() {
   cd "$1" && ls
 }
-bindkey "$key[Up]" history-beginning-search-backward
-bindkey "$key[Down]" history-beginning-search-forward
+if [ "$TERM" != "dumb" ] ; then
+    bindkey "$key[Up]" history-beginning-search-backward
+    bindkey "$key[Down]" history-beginning-search-forward
+fi
 alias ll="ls -l"
 alias tree="ls --tree"
 
