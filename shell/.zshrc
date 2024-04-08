@@ -1,7 +1,3 @@
-# Cache for zsh completion
-ZSH_CACHE="$XDG_CACHE_HOME"/zsh
-mkdir -p $ZSH_CACHE
-
 autoload -U compinit
 compinit -d "$ZSH_CACHE/zcompdump-$ZSH_VERSION"
 

@@ -13,6 +13,9 @@
 !shell/.config/starship.toml
 !shell/.config/zsh/
 !shell/.config/zsh/fzf-key-bindings.zsh
+!shell/.cache/
+!shell/.cache/zsh/
+!shell/.cache/zsh/hack
 
 !git/
 !git/.config/
