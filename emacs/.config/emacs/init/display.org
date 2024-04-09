@@ -40,7 +40,7 @@
   (let ((width (get-primary-monitor-width)))
     (if (<= width laptop-screen-width)
         'laptop
-      'desktop))))
+      'desktop)))
 
 (setq machine-type (get-machine-type))
 
@@ -95,7 +95,7 @@ These two packages don't seem to work properly.
     (when choice
       (let ((layout (assoc-default choice window-column-layouts)))
         (if layout
-            (split-window-by-column-%)
+            (split-window-by-column-% layout)
           (message "Layout not found."))))))
 
 #+end_src

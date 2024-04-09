@@ -38,7 +38,7 @@
 
 ;; Provision for opening initialisation files
 (defvar init-files
-  (cons user-init-file init-org-files))
+  (append (list early-init-file user-init-file) init-org-files))
 (defun find-init ()
   "Open an init file."
   (interactive)
