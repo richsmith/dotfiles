@@ -40,27 +40,10 @@
   (let ((width (get-primary-monitor-width)))
     (if (<= width laptop-screen-width)
         'laptop
-      'desktop)))
+      'desktop))))
 
 (setq machine-type (get-machine-type))
 
-(if (eq machine-type 'desktop)
-    (setq-default default-frame-alist
-       '((height . 60)
-         (width . 176)
-         (left . 613)
-         (top . 100)
-         (vertical-scroll-bars . nil)
-         (horizontal-scroll-bars . nil)
-         (tool-bar-lines . 0))))
-  (setq-default default-frame-alist
-       '((height . 55)
-         (width . 176)
-         (left . 613)
-         (top . 100)
-         (vertical-scroll-bars . nil)
-         (horizontal-scroll-bars . nil)
-         (tool-bar-lines . 0)))
 #+end_src
 
 * Frame Management
@@ -77,5 +60,42 @@ These two packages don't seem to work properly.
          ("M-<down>" . move-frame-down)
          ("M-<left>" . move-frame-left)
          ("M-<right>" . move-frame-right)))
+
+#+end_src
+
+* Frame configs
+#+begin_src emacs-lisp
+
+(defun split-window-by-column-% (percentages)
+  "Split the current window into vertical splits based on PERCENTAGES."
+  (when (> (apply '+ percentages) 100)
+    (error "Total of percentages exceeds 100"))
+  (delete-other-windows) ; Clean slate
+  (let ((total-width (window-total-width))
+        (remaining-width (window-total-width))
+        (split-width 0))
+    (dolist (percent (butlast percentages))
+      (setq split-width (floor (* total-width (/ percent 100.0))))
+      (setq remaining-width (- remaining-width split-width))
+      (split-window-horizontally split-width)
+      (other-window 1)))
+  (other-window 1))
+
+(defconst window-column-layouts
+  '(("50/50" . (50 50))
+    ("20/40/40" . (20 40 40))
+     ("33/33/33" . (33 33 33)))
+  "Predefined window layouts by % column splits.")
+
+(defun choose-window-layout-by-column-% ()
+  "Choose window layout."
+  (interactive)
+  (let* ((choices (mapcar 'car window-column-layouts))
+         (choice (completing-read "Choose layout: " choices nil t)))
+    (when choice
+      (let ((layout (assoc-default choice window-column-layouts)))
+        (if layout
+            (split-window-by-column-%)
+          (message "Layout not found."))))))
 
 #+end_src
