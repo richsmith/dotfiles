@@ -46,6 +46,14 @@
 
   ;; absolutely DO NOT beep at me
   (setq ring-bell-function `ignore)
+
+  (setq-default tab-width 4)
+
+  ;; buffer control
+  ;; don't pop-up warnings; I don't care about every library issue
+  (setq warning-minimum-level :error)
+  ;; open elsewhere if try to change locked buffer
+  (setq switch-to-buffer-in-dedicated-window 'pop)
   
   ;; Handy but messy; unsure of this one!
   ;; (setq enable-recursive-minibuffers t)
