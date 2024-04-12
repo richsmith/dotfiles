@@ -144,13 +144,13 @@
 * Scrolling
 #+begin_src emacs-lisp
 
-(defun scroll-up-preserve-location ()
+(bind-and-defun "M-p" scroll-up-preserve-location ()
   "Scroll up a line without moving the cursor position"
   (interactive)
   (scroll-up-line)
   (next-line))
 
-(defun scroll-down-preserve-location ()
+(bind-and-defun "M-n" scroll-down-preserve-location ()
   "Scroll down a line without moving the cursor position"
   (interactive)
   (scroll-down-line)
@@ -159,8 +159,6 @@
 (setq scroll-step 1)
 (setq scroll-conservatively 100000)
 (setq scroll-margin 10)
-(keymap-global-set "M-p" 'scroll-down-preserve-location)
-(keymap-global-set "M-n" 'scroll-up-preserve-location)
 (global-set-key (kbd "C-M-p") (kbd "C-u 8 C-p"))
 (global-set-key (kbd "C-M-n") (kbd "C-u 8 C-n"))
 

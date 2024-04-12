@@ -87,7 +87,7 @@ These two packages don't seem to work properly.
      ("33/33/33" . (33 33 33)))
   "Predefined window layouts by % column splits.")
 
-(defun choose-window-layout-by-column-% ()
+(bind-and-defun "C-x %" choose-window-layout-by-column-% ()
   "Choose window layout."
   (interactive)
   (let* ((choices (mapcar 'car window-column-layouts))
