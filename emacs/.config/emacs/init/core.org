@@ -108,3 +108,17 @@
          ("C-S-n" . forward-sexp)))
 
 #+end_src
+
+* Common macros and functions
+#+begin_src emacs-lisp
+
+(defmacro bind-and-defun (key funcname args docstring &rest body)
+  "Define a function FUNCNAME and bind it to KEY.
+ARGS, DOCSTRING, and BODY are as in `defun'."
+  `(progn
+     (defun ,funcname ,args
+       ,docstring
+       ,@body)
+     (global-set-key (kbd ,key) ',funcname)))
+
+#+end_src
