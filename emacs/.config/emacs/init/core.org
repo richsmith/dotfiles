@@ -96,7 +96,7 @@
          ("C-x t" . rotate-windows)
          ("C-M-g" . top-level)
          ("C-x C-z" . repeat)
-         ("C-z" . repeat)
+         ("C-z" . undo-only)
          ("C-d" . delete-char)
          ("C-S-D" . delete-backward-char)
          ("M-+" . comment-region)
