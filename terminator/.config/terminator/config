@@ -1,6 +1,8 @@
 [global_config]
   title_transmit_bg_color = "#000000"
 [keybindings]
+  insert_number = <Primary><Shift><Alt>l
+  layout_launcher = <Primary><Shift><Alt>d
 [profiles]
   [[default]]
     background_color = "#002b36"
