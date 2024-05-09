@@ -147,14 +147,14 @@
 (bind-and-defun "M-p" scroll-up-preserve-location ()
   "Scroll up a line without moving the cursor position"
   (interactive)
-  (scroll-up-line)
-  (next-line))
+  (scroll-down-line)
+  (previous-line))
 
 (bind-and-defun "M-n" scroll-down-preserve-location ()
   "Scroll down a line without moving the cursor position"
   (interactive)
-  (scroll-down-line)
-  (previous-line))
+  (scroll-up-line)
+  (next-line))
 
 (setq scroll-step 1)
 (setq scroll-conservatively 100000)
