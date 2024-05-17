@@ -36,7 +36,14 @@ install_starship:
 	curl -sS https://starship.rs/install.sh | sh
 
 
+ubuntu_config:
+	make setup_typeahead
+	make disable_screenshot_sound
+
 setup_typeahead:
 	sudo add-apt-repository ppa:lubomir-brindza/nautilus-typeahead
 	sudo apt dist-upgrade
 	nautilus -r
+
+disable_screenshot_sound:
+	sudo mv /usr/share/sounds/freedesktop/stereo/screen-capture.oga /usr/share/sounds/freedesktop/stereo/screen-capture.oga.bak
