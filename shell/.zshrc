@@ -78,7 +78,7 @@ alias ll="ls -l"
 alias tree="ls --tree"
 
 
-# Hacks and fixes
+# XDG Base Directory Specification hacks
 alias monerod=monerod --data-dir "$XDG_DATA_HOME"/bitmonero
 export _JAVA_OPTIONS=-Djava.util.prefs.userRoot="$XDG_CONFIG_HOME"/java
 export MINIKUBE_HOME="$XDG_DATA_HOME"/minikube
@@ -86,6 +86,14 @@ export GRADLE_USER_HOME="$XDG_DATA_HOME"/gradle
 export ANDROID_USER_HOME="$XDG_DATA_HOME"/android
 alias adb='HOME="$XDG_DATA_HOME"/android adb'
 alias wget=wget --hsts-file="$XDG_DATA_HOME/wget-hsts"
+export GNUPGHOME="$XDG_DATA_HOME"/gnupg
+export _JAVA_OPTIONS=-Djava.util.prefs.userRoot="$XDG_CONFIG_HOME"/java
+export AWS_SHARED_CREDENTIALS_FILE="$XDG_CONFIG_HOME"/aws/credentials
+export AWS_CONFIG_FILE="$XDG_CONFIG_HOME"/aws/config
+export npm_config_userconfig="$XDG_CONFIG_HOME"/npm/config
+export npm_config_cache="$XDG_CACHE_HOME"/npm
+export npm_config_prefix="$XDG_DATA_HOME"/npm
+export PATH=$PATH:$XDG_DATA_HOME/npm/bin
 
 # Friendly welcome message :)
 echo -e "\e[1;32mHi, $USER! Welcome to $HOST.\e[0m"
