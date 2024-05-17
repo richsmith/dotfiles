@@ -9,6 +9,8 @@ set -o ignoreeof
 # Preferences
 export LANG=en_GB.UTF-8
 export EDITOR='emacs -nw'
+# Allow backward-word etc. to stop at . and /, not just whitespace
+export WORDCHARS='*?_-[]~=&;!#$%^(){}<>'
 
 
 # History config
