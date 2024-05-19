@@ -42,8 +42,7 @@ ubuntu_config:
 
 setup_typeahead:
 	sudo add-apt-repository ppa:lubomir-brindza/nautilus-typeahead
-	sudo apt dist-upgrade
-	nautilus -r
+	sudo apt install nautilus
 
 disable_screenshot_sound:
 	sudo mv /usr/share/sounds/freedesktop/stereo/screen-capture.oga /usr/share/sounds/freedesktop/stereo/screen-capture.oga.bak
