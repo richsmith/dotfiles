@@ -45,6 +45,7 @@ fi
 
 if [ -x "$(command -v exa)" ]; then
     alias ls="exa --group-directories-first -F"
+    alias tree="ls --tree"
 fi
 
 if [ -x "$(command -v direnv)" ]; then
@@ -71,11 +72,11 @@ go() {
   cd "$1" && ls
 }
 if [ "$TERM" != "dumb" ] ; then
+    bindkey -e  # Use emacs key bindings <3
     bindkey "$key[Up]" history-beginning-search-backward
     bindkey "$key[Down]" history-beginning-search-forward
 fi
 alias ll="ls -l"
-alias tree="ls --tree"
 
 
 # XDG Base Directory Specification hacks
