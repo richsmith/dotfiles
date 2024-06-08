@@ -1,10 +1,5 @@
 * Handy Functions
 #+begin_src emacs-lisp
-(defun find-config ()
-  "Open the config file"
-  (interactive)
-  (find-file user-init-file))
-
 (defun find-custom ()
   "Open the custom file"
   (interactive)
@@ -207,12 +202,16 @@
 
 (define-key minibuffer-local-filename-completion-map
             [C-l] #'up-directory)
+#+end_src
 
+* Misc packages
+#+begin_src emacs-lisp
+(use-package wgrep
+  :ensure t)
+#+end_src
 
-;;; ***************************************************************************
-;;; Keys
-;;; (Keep at the bottom to avoid being clobbered by various modes)
-
+* Misc keys and settings
+#+begin_src emacs-lisp
 (keymap-global-set "C-x M-f" 'project-find-file)
 
 
