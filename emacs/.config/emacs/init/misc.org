@@ -96,15 +96,24 @@
         (filename (buffer-file-name)))
     (if (not (and filename (file-exists-p filename)))
         (error "Buffer '%s' is not visiting a file" name)
-      (let ((new-name (read-file-name "New name: " filename nil nil)))
-        (if (get-buffer new-name)
-            (error "A buffer named '%s' already exists" new-name)
-          (rename-file filename new-name 1)
-          (rename-buffer new-name)
-          (set-visited-file-name new-name)
-          (set-buffer-modified-p nil)
-          (message "File '%s' successfully renamed to '%s'"
-                   name (file-name-nondirectory new-name)))))))
+      (let* ((dir (file-name-directory filename))
+             (default-name (file-name-nondirectory filename))
+             (new-filename (read-file-name
+                            (format "New name: ")
+                            dir filename nil default-name
+                            (lambda (name)
+                              (not (string-equal (expand-file-name name dir) filename))))))
+        (setq new-filename (expand-file-name new-filename dir))
+        (if (string-equal filename new-filename)
+            (message "File is unchanged")
+          (if (file-exists-p new-filename)
+              (error "A file named '%s' already exists" new-filename)
+            (rename-file filename new-filename 1)
+            (rename-buffer (file-name-nondirectory new-filename))
+            (set-visited-file-name new-filename)
+            (set-buffer-modified-p nil)
+            (message "File '%s' renamed to '%s'"
+                     name (file-name-nondirectory new-filename))))))))
 
 (defun mask-text (start end mask-char)
   "Overwrite the region with the selected mask character."
@@ -126,7 +135,7 @@
    (delete-region (point) end))))
 
 (defun get-buffers-matching-mode (mode)
-  "Returns a list of buffers where their major-mode is equal to MODE"
+  "Returns a list of buffers where their major-mode is equal to MODE."
   (let ((buffer-mode-matches '()))
     (dolist (buf (buffer-list))
       (with-current-buffer buf
