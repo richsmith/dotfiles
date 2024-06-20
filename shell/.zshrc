@@ -43,7 +43,7 @@ if [ -x "$(command -v xclip)" ]; then
     alias cb=clipboard
 fi
 
-if [ -x "$(command -v exa)" ]; then
+if [ -x "$(command -v eza)" ]; then
     alias ls="exa --group-directories-first -F"
     alias tree="ls --tree"
 fi
