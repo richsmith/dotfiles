@@ -35,6 +35,29 @@ else
     PS1='%F{yellow}%~%f %F{green}➜%f '
 fi
 
+# Function to set terminal title
+function set_terminal_title() {
+    local host=""
+    local dir="${PWD/#$HOME/~}"
+
+    # Check if the session is remote
+    if [[ -n "${SSH_CLIENT}" || -n "${SSH_TTY}" ]]; then
+        host="@$(hostname):"
+    fi
+
+    # Set the terminal title
+    echo -ne "\033]0;${host}${dir}\007"
+}
+
+if [ "$TERM" != "dumb" ]; then
+    # Set the terminal title when the directory changes 
+    autoload -U add-zsh-hook
+    add-zsh-hook chpwd set_terminal_title
+
+    # Also set the title for the initial shell
+    set_terminal_title
+fi
+
 
 # Hook in other applications if available
 if [ -x "$(command -v xclip)" ]; then
