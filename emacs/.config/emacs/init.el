@@ -25,6 +25,16 @@
           init-org-file-names)
   "List of org files to load.")
 
+;; Provision for opening initialisation files
+(defvar init-files
+  (append (list early-init-file user-init-file) init-org-files))
+(defun find-init ()
+  "Open an init file."
+  (interactive)
+  (let ((file (completing-read "Select init file: " init-files)))
+    (when file
+      (find-file file))))
+
 ;; Load the initialisation files
 (defun load-init-org-file (file-name)
   (org-babel-load-file (expand-file-name file-name init-dir)))
@@ -35,13 +45,3 @@
 (let ((local-file (expand-file-name "local.el" user-emacs-directory)))
   (when (file-exists-p local-file)
     (load local-file)))
-
-;; Provision for opening initialisation files
-(defvar init-files
-  (append (list early-init-file user-init-file) init-org-files))
-(defun find-init ()
-  "Open an init file."
-  (interactive)
-  (let ((file (completing-read "Select init file: " init-files)))
-    (when file
-      (find-file file))))
