@@ -149,6 +149,22 @@ For local Python saves add to .dir-locals.el
 
 #+end_src
 
+* Dart
+#+begin_src emacs-lisp
+; dart-mode lsp-mode lsp-dart lsp-treemacs
+(use-package dart-mode
+  :ensure t)
+(use-package lsp-dart
+  :ensure t
+  :hook (dart-mode . lsp)
+  :config
+  (setq lsp-headerline-breadcrumb-enable nil))
+(use-package flutter
+  :after dart-mode
+  :bind (:map dart-mode-map
+              ("C-M-x" . #'flutter-run-or-hot-reload)))
+#+end_src
+
 * JS
 #+begin_src emacs-lisp
 
