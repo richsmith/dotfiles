@@ -61,7 +61,8 @@
          (typescript-ts-mode . combobulate-mode)
          (tsx-ts-mode . combobulate-mode)))
 
-(use-package editorconfig)
+(use-package editorconfig
+  :ensure t)
 
 (use-package direnv
   :ensure t
@@ -79,27 +80,29 @@
          (emacs-lisp-mode . (lambda() (setq fill-column 80
                                        auto-fill-mode 1)))))
 
+; ensure node and npm installed
 (use-package copilot
-  :straight (:host github
-             :repo "copilot-emacs/copilot.el"
-             :branch "main")
-  :ensure t
-  :hook (prog-mode . copilot-mode)
-  :bind (("C-c M-f" . copilot-accept-completion-by-word)
-         ("C-c <tab>" . copilot-accept-completion)
-         :map copilot-completion-map
-         ("C-g" . 'copilot-clear-overlay)
-         ("M-P" . 'copilot-previous-completion)
-         ("M-N" . 'copilot-next-completion)
-         ("<tab>" . 'copilot-accept-completion)
-         ("M-f" . 'copilot-accept-completion-by-word)
-         ("M-e" . copilot-accept-completion-by-line)
-         ("M-n" . copilot-accept-completion-by-line))
-  :custom-face (copilot-overlay-face ((t :foreground "silver" :underline t)))
-  :config
-  (setq copilot-log-max 10000)
-  (setq copilot-node-executable
-        (executable-find "node")))
+ :after editorconfig
+ :straight (:host github
+            :repo "copilot-emacs/copilot.el"
+            :branch "main")
+ :ensure t
+ :hook (prog-mode . copilot-mode)
+ :bind (("C-c M-f" . copilot-accept-completion-by-word)
+        ("C-c <tab>" . copilot-accept-completion)
+        :map copilot-completion-map
+        ("C-g" . 'copilot-clear-overlay)
+        ("M-P" . 'copilot-previous-completion)
+        ("M-N" . 'copilot-next-completion)
+        ("<tab>" . 'copilot-accept-completion)
+        ("M-f" . 'copilot-accept-completion-by-word)
+        ("M-e" . copilot-accept-completion-by-line)
+        ("M-n" . copilot-accept-completion-by-line))
+ :custom-face (copilot-overlay-face ((t :foreground "silver" :underline t)))
+ :config
+ (setq copilot-log-max 10000)
+ (setq copilot-node-executable
+       (executable-find "node")))
 
 ;; Currently disabled due to issues with eglot
 ;; See https://github.com/joaotavora/eglot/discussions/1127
@@ -119,6 +122,7 @@
 
 
 * Python
+
 Recommend installing
 pip install pyls-black pyls-isort pyls-mypy debugpy black isort
 For local Python saves add to .dir-locals.el
