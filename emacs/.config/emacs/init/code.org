@@ -80,6 +80,10 @@
          (emacs-lisp-mode . (lambda() (setq fill-column 80
                                        auto-fill-mode 1)))))
 
+(use-package format-all
+  :commands format-all-mode
+  :hook (prog-mode . format-all-mode))
+
 ; ensure node and npm installed
 (use-package copilot
  :after editorconfig
