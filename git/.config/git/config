@@ -8,8 +8,14 @@
 	excludesfile = ~/.config/git/gitignore
 	editor = emacs -nw -q
 
+[pull]
+    ff = only
+
 [push]
 	autoSetupRemote = true
+
+[moved]
+    colorMoved = zebra
 
 [alias]
         co = checkout
@@ -29,6 +35,7 @@
 	branch-history = recent-branches
         bh = branch-history
 
-
 [branch]
 	sort = -committerdate
+    autosetupmerge = always
+    autosetuprebase = always
