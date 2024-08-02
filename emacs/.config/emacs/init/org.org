@@ -14,6 +14,9 @@
         org-src-preserve-indentation nil
         org-edit-src-content-indentation 0))
 
+(use-package org-gcal
+  :ensure t)
+
 #+end_src
 
 * Functions
