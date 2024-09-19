@@ -50,7 +50,7 @@ function set_terminal_title() {
 }
 
 if [ "$TERM" != "dumb" ]; then
-    # Set the terminal title when the directory changes 
+    # Set the terminal title when the directory changes
     autoload -U add-zsh-hook
     add-zsh-hook chpwd set_terminal_title
 
@@ -67,8 +67,15 @@ if [ -x "$(command -v xclip)" ]; then
 fi
 
 if [ -x "$(command -v eza)" ]; then
-    alias ls="exa --group-directories-first -F"
-    alias tree="ls --tree"
+    function ls() {
+        eza --group-directories-first -F "$@"
+    }
+
+    function tree() {
+        ls --tree "$@"
+    }
+
+    compdef _ls eza
 fi
 
 if [ -x "$(command -v direnv)" ]; then
@@ -118,6 +125,7 @@ export npm_config_userconfig="$XDG_CONFIG_HOME"/npm/config
 export npm_config_cache="$XDG_CACHE_HOME"/npm
 export npm_config_prefix="$XDG_DATA_HOME"/npm
 export PATH=$PATH:$XDG_DATA_HOME/npm/bin
+export GEM_HOME="$XDG_DATA_HOME"/gem
 
 # Friendly welcome message :)
 echo -e "\e[1;32mHi, $USER! Welcome to $HOST.\e[0m"
