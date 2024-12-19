@@ -2,8 +2,11 @@ emacs
 eza
 fzf
 git
+gnome-shell-extension-manager
+gnome-tweaks
 ncal
 ripgrep
 stow
+syncthing
 terminator
 zsh

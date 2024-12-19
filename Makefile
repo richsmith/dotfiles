@@ -35,10 +35,14 @@ install_starship:
         # starship configured under shell
 	curl -sS https://starship.rs/install.sh | sh
 
-
 ubuntu_config:
 	make setup_typeahead
 	make disable_screenshot_sound
+	make setup_syncthing
+
+setup_syncthing:
+	systemctl --user enable syncthing.service
+	systemctl --user start syncthing.service
 
 setup_typeahead:
 	sudo add-apt-repository ppa:lubomir-brindza/nautilus-typeahead
