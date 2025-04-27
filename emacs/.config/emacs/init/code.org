@@ -131,8 +131,8 @@
 
 * Python
 
-Recommend installing
-pip install pyls-black pyls-isort pyls-mypy debugpy black isort
+Recommend installing python-lsp-server
+pipx install "python-lsp-server[all]" # quotes necessary for zsh
 For local Python saves add to .dir-locals.el
 ((python-mode
  (eval python-isort-on-save-mode)
@@ -158,6 +158,12 @@ For local Python saves add to .dir-locals.el
          (python-mode . python-isort-on-save-mode))
   :ensure t)
 
+(use-package eglot
+  :ensure t
+  :defer t
+  :hook (python-mode . eglot-ensure)
+  :bind (("C-c r" . eglot-rename)
+         ("C-c C-r" . eglot-rename)))
 
 #+end_src
 
