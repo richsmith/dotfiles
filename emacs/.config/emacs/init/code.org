@@ -69,10 +69,10 @@
   :config
   (direnv-mode))
 
-(use-package flymake
+(use-package flycheck
   :bind
-  (("C-c e p" . flymake-goto-previous-error)
-   ("C-c e n" . flymake-goto-next-error)))
+  (("C-c e p" . flycheck-previous-error)
+   ("C-c e n" . flycheck-next-error)))
 
 (use-package aggressive-indent
   :ensure t
