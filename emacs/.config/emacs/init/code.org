@@ -5,13 +5,6 @@
   :ensure nil
   :hook (prog-mode . display-line-numbers-mode))
 
-(use-package eglot
-  :ensure t
-  :defer t
-  :hook (python-ts-mode . eglot-ensure)
-  :bind (("C-c r" . eglot-rename)
-         ("C-c C-r" . eglot-rename)))
-
 (use-package dape
   :ensure t
   :straight (:host github :repo "svaante/dape")
