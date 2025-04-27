@@ -119,6 +119,7 @@ alias adb='HOME="$XDG_DATA_HOME"/android adb'
 alias wget=wget --hsts-file="$XDG_DATA_HOME/wget-hsts"
 export GNUPGHOME="$XDG_DATA_HOME"/gnupg
 export _JAVA_OPTIONS=-Djava.util.prefs.userRoot="$XDG_CONFIG_HOME"/java
+export GRADLE_USER_HOME="$XDG_DATA_HOME"/gradle
 export AWS_SHARED_CREDENTIALS_FILE="$XDG_CONFIG_HOME"/aws/credentials
 export AWS_CONFIG_FILE="$XDG_CONFIG_HOME"/aws/config
 export npm_config_userconfig="$XDG_CONFIG_HOME"/npm/config
@@ -126,6 +127,7 @@ export npm_config_cache="$XDG_CACHE_HOME"/npm
 export npm_config_prefix="$XDG_DATA_HOME"/npm
 export PATH=$PATH:$XDG_DATA_HOME/npm/bin
 export GEM_HOME="$XDG_DATA_HOME"/gem
+export DOCKER_CONFIG="$XDG_CONFIG_HOME"/docker
 
 # Friendly welcome message :)
 echo -e "\e[1;32mHi, $USER! Welcome to $HOST.\e[0m"
