@@ -46,22 +46,6 @@
 
 #+end_src
 
-* Frame Management
-These two packages don't seem to work properly.
- 
-#+begin_src emacs-lisp
-
-(use-package frame-fns
-  :straight (frame-fns :type git :host github :repo "emacsmirror/frame-fns"))
-
-(use-package frame-cmds
-  :straight (frame-cmds :type git :host github :repo "emacsmirror/frame-cmds")
-  :bind (("M-<up>" . move-frame-up)
-         ("M-<down>" . move-frame-down)
-         ("M-<left>" . move-frame-left)
-         ("M-<right>" . move-frame-right)))
-
-#+end_src
 
 * Frame configs
 #+begin_src emacs-lisp

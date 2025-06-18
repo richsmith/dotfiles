@@ -7,7 +7,6 @@
 
 (use-package dape
   :ensure t
-  :straight (:host github :repo "svaante/dape")
   :after (eglot python)
   :config
   (add-to-list 'dape-configs
@@ -24,35 +23,11 @@
   (setq dape-key-prefix "\C-x\C-a")
   (setq dape-cwd-fn 'projectile-project-root))
 
-(use-package tree-sitter
-  :ensure t
-  :config
-  (global-tree-sitter-mode)
-  (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
-(use-package treesit-auto
-  :after tree-sitter
-  :ensure t
-  :init
-  (setq treesit-auto-install t)
-  :config
-  (global-treesit-auto-mode))
-(use-package tree-sitter-langs
-  :after tree-sitter
-  :ensure t)
-
 (use-package combobulate
-  :after tree-sitter
-  :ensure t
-  :straight (:host github :repo "mickeynp/combobulate")
-  :preface
-  (setq combobulate-key-prefix "C-c o")
-  :hook ((python-ts-mode . combobulate-mode)
-         (js-ts-mode . combobulate-mode)
-         (css-ts-mode . combobulate-mode)
-         (yaml-ts-mode . combobulate-mode)
-         (json-ts-mode . combobulate-mode)
-         (typescript-ts-mode . combobulate-mode)
-         (tsx-ts-mode . combobulate-mode)))
+  :vc (:url "https://github.com/mickeynp/combobulate")
+   :custom
+   (combobulate-key-prefix "C-c o")
+   :hook ((prog-mode . combobulate-mode)))
 
 (use-package editorconfig
   :ensure t)
@@ -83,27 +58,39 @@
 
 ; ensure node and npm installed
 (use-package copilot
- :after editorconfig
- :straight (:host github
-            :repo "copilot-emacs/copilot.el"
-            :branch "main")
- :ensure t
- :hook (prog-mode . copilot-mode)
- :bind (("C-c M-f" . copilot-accept-completion-by-word)
-        ("C-c <tab>" . copilot-accept-completion)
-        :map copilot-completion-map
-        ("C-g" . 'copilot-clear-overlay)
-        ("M-P" . 'copilot-previous-completion)
-        ("M-N" . 'copilot-next-completion)
-        ("<tab>" . 'copilot-accept-completion)
-        ("M-f" . 'copilot-accept-completion-by-word)
-        ("M-e" . copilot-accept-completion-by-line)
-        ("M-n" . copilot-accept-completion-by-line))
- :custom-face (copilot-overlay-face ((t :foreground "silver" :underline t)))
- :config
- (setq copilot-log-max 10000)
- (setq copilot-node-executable
-       (executable-find "node")))
+  :after editorconfig
+  :vc (:url "https://github.com/copilot-emacs/copilot.el.git")
+  :bind (("C-c M-f" . copilot-accept-completion-by-word)
+         ("C-c <tab>" . copilot-accept-completion)
+         :map copilot-completion-map
+         ("C-g" . 'copilot-clear-overlay)
+         ("M-P" . 'copilot-previous-completion)
+         ("M-N" . 'copilot-next-completion)
+         ("<tab>" . 'copilot-accept-completion)
+         ("M-f" . 'copilot-accept-completion-by-word)
+         ("M-e" . copilot-accept-completion-by-line)
+         ("M-n" . copilot-accept-completion-by-line))
+  :custom-face (copilot-overlay-face ((t :foreground "silver" :underline t)))
+  :config
+  (setq copilot-log-max 10000)
+  
+  ;; Only set up copilot if all dependencies are available
+  (let ((node-path (or (executable-find "node")
+                       (executable-find "nodejs")))
+        (copilot-server (executable-find "copilot-language-server")))
+    
+    (if (and node-path copilot-server)
+        (progn
+          (setq copilot-node-executable node-path)
+          ;; Only enable the hook if everything is ready
+          (add-hook 'prog-mode-hook #'copilot-mode)
+          (message "Copilot configured successfully"))
+      (progn
+        (message "Copilot dependencies not found - skipping activation")
+        (when (not node-path)
+          (message "  - Node.js not found"))
+        (when (not copilot-server)
+          (message "  - copilot-language-server not found (run: npm install -g @github/copilot-language-server)"))))))
 
 ;; Currently disabled due to issues with eglot
 ;; See https://github.com/joaotavora/eglot/discussions/1127
@@ -147,16 +134,8 @@ For local Python saves add to .dir-locals.el
          (python-mode . blacken-mode)))
 
 (use-package python-isort
-  :hook ((python-ts-mode . python-isort-on-save-mode)
-         (python-mode . python-isort-on-save-mode))
+  :hook ((python-mode . python-isort-on-save-mode))
   :ensure t)
-
-(use-package eglot
-  :ensure t
-  :defer t
-  :hook (python-mode . eglot-ensure)
-  :bind (("C-c r" . eglot-rename)
-         ("C-c C-r" . eglot-rename)))
 
 #+end_src
 
