@@ -1,3 +1,5 @@
+umask u=rwx,g=,o=
+
 # Core stuff
 export PATH=$HOME/bin:/usr/local/bin:$HOME/.local/bin:$PATH
 export XDG_CONFIG_HOME=$HOME/.config
