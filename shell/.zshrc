@@ -98,9 +98,6 @@ fi
 
 
 # Aliases, commands and shortcuts
-go() {
-  cd "$1" && ls
-}
 if [ "$TERM" != "dumb" ] ; then
     bindkey -e  # Use emacs key bindings <3
     bindkey "$key[Up]" history-beginning-search-backward
@@ -127,6 +124,7 @@ export npm_config_cache="$XDG_CACHE_HOME"/npm
 export npm_config_prefix="$XDG_DATA_HOME"/npm
 export PATH=$PATH:$XDG_DATA_HOME/npm/bin
 export GEM_HOME="$XDG_DATA_HOME"/gem
+export IPYTHONDIR="$XDG_CONFIG_HOME"/ipython
 export DOCKER_CONFIG="$XDG_CONFIG_HOME"/docker
 
 # Friendly welcome message :)
