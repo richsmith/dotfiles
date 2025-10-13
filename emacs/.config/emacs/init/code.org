@@ -92,6 +92,19 @@
         (when (not copilot-server)
           (message "  - copilot-language-server not found (run: npm install -g @github/copilot-language-server)"))))))
 
+
+(use-package shell-maker
+  :ensure t)
+
+(use-package acp
+  :vc (:url "https://github.com/xenodium/acp.el"))
+
+(use-package agent-shell
+  :vc (:url "https://github.com/xenodium/agent-shell"))
+
+
+
+
 ;; Currently disabled due to issues with eglot
 ;; See https://github.com/joaotavora/eglot/discussions/1127
 ;; (use-package corfu
