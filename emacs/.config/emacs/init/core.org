@@ -19,6 +19,14 @@
 
 #+end_src
 
+* Environment Setup
+#+begin_src emacs-lisp
+(use-package exec-path-from-shell
+  :ensure t
+  :config
+  (exec-path-from-shell-initialize))
+#+end_src
+
 * Core Emacs Config
 #+begin_src emacs-lisp
 
