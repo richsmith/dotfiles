@@ -240,6 +240,9 @@ For local Python saves add to .dir-locals.el
   :hook
   (terraform-mode . terraform-format-on-save-mode))
 
+(use-package groovy-mode
+  :ensure t)
+
 (use-package markdown-mode
   :ensure t
   :mode ("\\.md\\'" . markdown-mode))
