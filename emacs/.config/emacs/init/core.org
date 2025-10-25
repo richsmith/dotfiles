@@ -88,6 +88,7 @@
          ("M-<backspace>" . backward-kill-sexp)
          ("C-x C-r" . rename-current-buffer-file)
          ("C-x M-o" . other-frame)
+         ("M-o" . other-window)
          ("C-x O" . previous-multiframe-window)
          ("C-x t" . rotate-windows)
          ("C-M-g" . top-level)
