@@ -4,8 +4,5 @@
 (setq mac-option-modifier 'super)
 (setq mac-command-modifier 'meta)
 (setq default-directory "~/")
-(setq create-lockfiles nil)
-(when (memq window-system '(mac ns))
-(exec-path-from-shell-initialize)))
 
 #+end_src
