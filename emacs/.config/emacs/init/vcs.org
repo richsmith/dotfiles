@@ -44,3 +44,11 @@
 
 #+end_src
 
+* Projects
+
+#+begin_src emacs-lisp
+
+(use-package consult-project-extra
+  :ensure t
+  :bind ("C-x M-f" . consult-project-extra-find))
+#+end_src
