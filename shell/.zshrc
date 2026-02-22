@@ -104,15 +104,18 @@ if [ "$TERM" != "dumb" ] ; then
     bindkey "$key[Down]" history-beginning-search-forward
 fi
 alias ll="ls -l"
-
+mkcd() { mkdir -p "$1" && cd "$1" }
 
 # XDG Base Directory Specification hacks
 alias monerod=monerod --data-dir "$XDG_DATA_HOME"/bitmonero
 export _JAVA_OPTIONS=-Djava.util.prefs.userRoot="$XDG_CONFIG_HOME"/java
 export MINIKUBE_HOME="$XDG_DATA_HOME"/minikube
+export KUBECONFIG="$XDG_CONFIG_HOME/kube" 
+export KUBECACHEDIR="$XDG_CACHE_HOME/kube"
 export GRADLE_USER_HOME="$XDG_DATA_HOME"/gradle
 export ANDROID_USER_HOME="$XDG_DATA_HOME"/android
 alias adb='HOME="$XDG_DATA_HOME"/android adb'
+export WGETRC="$XDG_CONFIG_HOME/wgetrc"
 alias wget=wget --hsts-file="$XDG_DATA_HOME/wget-hsts"
 export GNUPGHOME="$XDG_DATA_HOME"/gnupg
 export _JAVA_OPTIONS=-Djava.util.prefs.userRoot="$XDG_CONFIG_HOME"/java
