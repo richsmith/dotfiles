@@ -72,7 +72,7 @@ if [ -x "$(command -v eza)" ]; then
     }
 
     function tree() {
-        ls --tree "$@"
+        ls --tree --level=3 "$@"
     }
 
     compdef _ls eza
