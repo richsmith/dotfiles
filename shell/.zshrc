@@ -6,17 +6,13 @@ umask u=rwx,g=,o=
 set -o ignoreeof
 
 
-# Preferences
-export LANG=en_GB.UTF-8
-export EDITOR='emacs -nw'
+# Preferences (LANG, EDITOR set in .zshenv)
 # Allow backward-word etc. to stop at . and /, not just whitespace
 export WORDCHARS='*?[]~=&;!#$%^(){}<>'
 
 
-# History config
-HISTSIZE=10000000
-SAVEHIST=10000000
-export HISTFILE=$ZSH_CONFIG/zsh_history
+# History config (HISTFILE/HISTSIZE/SAVEHIST set in .zshenv)
+setopt EXTENDED_HISTORY
 setopt INC_APPEND_HISTORY
 setopt SHARE_HISTORY
 setopt HIST_EXPIRE_DUPS_FIRST
@@ -106,29 +102,12 @@ fi
 alias ll="ls -l"
 mkcd() { mkdir -p "$1" && cd "$1" }
 
-# XDG Base Directory Specification hacks
-alias monerod=monerod --data-dir "$XDG_DATA_HOME"/bitmonero
-export _JAVA_OPTIONS=-Djava.util.prefs.userRoot="$XDG_CONFIG_HOME"/java
-export MINIKUBE_HOME="$XDG_DATA_HOME"/minikube
-export KUBECONFIG="$XDG_CONFIG_HOME/kube" 
-export KUBECACHEDIR="$XDG_CACHE_HOME/kube"
-export GRADLE_USER_HOME="$XDG_DATA_HOME"/gradle
-export ANDROID_USER_HOME="$XDG_DATA_HOME"/android
+# XDG aliases (env vars moved to .profile)
+alias monerod='monerod --data-dir "$XDG_DATA_HOME"/bitmonero'
 alias adb='HOME="$XDG_DATA_HOME"/android adb'
-export WGETRC="$XDG_CONFIG_HOME/wgetrc"
-alias wget=wget --hsts-file="$XDG_DATA_HOME/wget-hsts"
-export GNUPGHOME="$XDG_DATA_HOME"/gnupg
+alias wget='wget --hsts-file="$XDG_DATA_HOME/wget-hsts"'
+# Android Studio hates this being set in .profile >:(
 export _JAVA_OPTIONS=-Djava.util.prefs.userRoot="$XDG_CONFIG_HOME"/java
-export GRADLE_USER_HOME="$XDG_DATA_HOME"/gradle
-export AWS_SHARED_CREDENTIALS_FILE="$XDG_CONFIG_HOME"/aws/credentials
-export AWS_CONFIG_FILE="$XDG_CONFIG_HOME"/aws/config
-export npm_config_userconfig="$XDG_CONFIG_HOME"/npm/config
-export npm_config_cache="$XDG_CACHE_HOME"/npm
-export npm_config_prefix="$XDG_DATA_HOME"/npm
-export PATH=$PATH:$XDG_DATA_HOME/npm/bin
-export GEM_HOME="$XDG_DATA_HOME"/gem
-export IPYTHONDIR="$XDG_CONFIG_HOME"/ipython
-export DOCKER_CONFIG="$XDG_CONFIG_HOME"/docker
 
 # Friendly welcome message :)
 echo -e "\e[1;32mHi, $USER! Welcome to $HOST.\e[0m"
