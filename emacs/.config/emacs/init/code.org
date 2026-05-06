@@ -42,11 +42,19 @@
   :bind (("C-c e p" . flymake-goto-prev-error)
          ("C-c e n" . flymake-goto-next-error)))
 
+(use-package dumb-jump
+  :ensure t
+  :config
+  (add-hook 'xref-backend-functions #'dumb-jump-xref-activate))
+
 (use-package aggressive-indent
   :ensure t
   :hook ((emacs-lisp-mode . aggressive-indent-mode)
          (emacs-lisp-mode . (lambda() (setq fill-column 80
-                                       auto-fill-mode 1)))))
+
+                      auto-fill-mode 1)))))
+
+(use-package reformatter :ensure t)
 
 (use-package format-all
   :commands format-all-mode
