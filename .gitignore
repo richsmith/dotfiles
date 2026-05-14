@@ -16,6 +16,7 @@
 !shell/.cache/
 !shell/.cache/zsh/
 !shell/.cache/zsh/hack
+!shell/.profile
 
 !git/
 !git/.config/
