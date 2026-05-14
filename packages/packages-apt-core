@@ -4,9 +4,11 @@ fzf
 git
 gnome-shell-extension-manager
 gnome-tweaks
+make
 ncal
 ripgrep
 stow
 syncthing
 terminator
+v4l-utils
 zsh
