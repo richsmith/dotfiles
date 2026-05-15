@@ -11,9 +11,18 @@
 	("melpa" . "https://melpa.org/packages/")))
 
 (package-initialize)
-(package-refresh-contents)
+
+;; Refresh package archives on demand: if an install fails (typically because
+;; the cached archive contents are stale), refresh once and retry.
+(define-advice package-install (:around (orig pkg &rest args) refresh-on-miss)
+  (condition-case err
+      (apply orig pkg args)
+    (error
+     (package-refresh-contents)
+     (apply orig pkg args))))
 
 (unless (package-installed-p 'use-package)
+  (package-refresh-contents)
   (package-install 'use-package))
 (setq use-package-always-ensure t)
 
