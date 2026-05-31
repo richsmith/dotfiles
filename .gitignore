@@ -43,3 +43,8 @@
 
 !packages/
 !packages/**
+
+!kitty/
+!kitty/.config/
+!kitty/.config/kitty/
+!kitty/.config/kitty/kitty.conf

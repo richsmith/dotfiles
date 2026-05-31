@@ -1,6 +1,6 @@
 setup: setup_dotfiles
 
-setup_dotfiles: setup_shell setup_git setup_emacs setup_python setup_terminator
+setup_dotfiles: setup_shell setup_git setup_emacs setup_python setup_terminator setup_kitty
 
 setup_shell:
 	stow shell --target=${HOME}
@@ -16,6 +16,9 @@ setup_python:
 
 setup_terminator:
 	stow terminator --target=${HOME}
+
+setup_kitty:
+	stow kitty --target=${HOME}
 
 
 basic_ubuntu: package_install_apt_core package_install_apt_media install_starship
