@@ -1,4 +1,5 @@
 curl
+direnv
 emacs
 eza
 fzf
