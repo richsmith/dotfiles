@@ -48,8 +48,7 @@ setup_syncthing:
 	systemctl --user start syncthing.service
 
 setup_typeahead:
-	sudo add-apt-repository ppa:lubomir-brindza/nautilus-typeahead
-	sudo apt install nautilus
+	./scripts/nautilus-typeahead.sh
 
 disable_screenshot_sound:
 	sudo mv /usr/share/sounds/freedesktop/stereo/screen-capture.oga /usr/share/sounds/freedesktop/stereo/screen-capture.oga.bak

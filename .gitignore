@@ -6,6 +6,9 @@
 !Readme.md
 !Makefile
 
+!scripts/
+!scripts/*.sh
+
 !shell/
 !shell/.zshenv
 !shell/.zshrc
