@@ -8,6 +8,7 @@ gnome-shell-extension-manager
 gnome-tweaks
 make
 ncal
+plocate
 ripgrep
 stow
 syncthing
