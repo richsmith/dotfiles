@@ -39,3 +39,5 @@
 	sort = -committerdate
     autosetupmerge = always
     autosetuprebase = always
+[init]
+	defaultBranch = main
