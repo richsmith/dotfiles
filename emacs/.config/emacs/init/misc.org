@@ -221,9 +221,6 @@
 
 * Misc keys and settings
 #+begin_src emacs-lisp
-(keymap-global-set "C-x M-f" 'project-find-file)
-
-
 (keymap-global-set "C-S-j"
                    (lambda ()
                      (interactive)
